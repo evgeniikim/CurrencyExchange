@@ -16,6 +16,7 @@ public class UserModel  implements IUserModel {
         this.email = email;
         this.password = password;
     }
+    
 
     // Getters
     public int getUserId() {
