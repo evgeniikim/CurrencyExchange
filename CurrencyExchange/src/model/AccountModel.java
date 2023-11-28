@@ -5,6 +5,7 @@ import interfaces.ICurrencyModel;
 public class AccountModel {
     public int getAccountId(){
 
+        
     }
     int getUserId(){
 
