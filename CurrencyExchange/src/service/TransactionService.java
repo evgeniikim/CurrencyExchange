@@ -1,10 +1,17 @@
 package service;
 
 import interfaces.*;
+import repository.TransactionRepository;
+
 import java.util.List;
 
 public class TransactionService implements ITransactionService {
     private ITransactionRepository transactionRepository;
+
+    // Конструктор по умолчанию без параметров
+    public TransactionService() {
+        this.transactionRepository = new TransactionRepository();
+    }
 
     public TransactionService(ITransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
