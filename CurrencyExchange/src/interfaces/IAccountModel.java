@@ -8,4 +8,5 @@ public interface IAccountModel {
     void setCurrency(ICurrencyModel currency);
     void deposit(double amount);
     void withdraw(double amount);
+    
 }
