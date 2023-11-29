@@ -66,7 +66,7 @@ public class ConsoleMenu implements IConsoleMenu {
         System.out.println("6. Выйти из системы");
         handleAdminMenuInput(userId);
     }
-    
+
     // Реализация метода для показа меню аккаунта
     @Override
     public void showAccountMenu(int accountId) {
