@@ -1,12 +1,16 @@
 
+import repository.AccountRepository;
+import repository.UserRepository;
 import service.*;
 import view.ConsoleMenu;
 
 public class Main {
 
     public static void main(String[] args) {
-        AccountService accountService = new AccountService();
-        UserService userService = new UserService();
+        AccountRepository accountRepository = new AccountRepository();
+        AccountService accountService = new AccountService(accountRepository);
+        UserRepository userRepository = new UserRepository();
+        UserService userService = new UserService(userRepository);
         TransactionService transactionService = new TransactionService();
 
         ConsoleMenu consoleMenu = new ConsoleMenu(accountService, userService, transactionService);

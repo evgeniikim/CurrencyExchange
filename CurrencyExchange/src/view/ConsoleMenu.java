@@ -1,6 +1,6 @@
 package view;
 
-import interfaces.*;
+import interfaces.IConsoleMenu;
 import service.*;
 
 import java.util.Scanner;
