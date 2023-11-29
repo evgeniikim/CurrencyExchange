@@ -43,11 +43,30 @@ public class ConsoleMenu implements IConsoleMenu {
     public void showUserMenu(int userId) {
         System.out.println("=== Меню пользователя ===");
         System.out.println("1. Просмотр профиля");
-        System.out.println("2. Просмотр транзакций");
-        System.out.println("3. Выйти из системы");
-        handleUserMenuInput();
+        System.out.println("2. Просмотр баланса");
+        System.out.println("3. Пополнение счета");
+        System.out.println("4. Снятие средств");
+        System.out.println("5. Открытие нового счета");
+        System.out.println("6. Закрытие счета");
+        System.out.println("7. Просмотр истории операций");
+        System.out.println("8. Обмен валют");
+        System.out.println("9. Выйти из системы");
+        handleUserMenuInput(userId);
     }
 
+    // Реализация метода для показа меню Администратора
+    @Override
+    public void showAdminMenu(int userId) {
+        System.out.println("=== Меню администратора ===");
+        System.out.println("1. Изменение курса валюты");
+        System.out.println("2. Добавление/удаление валюты");
+        System.out.println("3. Просмотр операций пользователя");
+        System.out.println("4. Просмотр операций по валюте");
+        System.out.println("5. Назначение другого пользователя администратором");
+        System.out.println("6. Выйти из системы");
+        handleAdminMenuInput(userId);
+    }
+    
     // Реализация метода для показа меню аккаунта
     @Override
     public void showAccountMenu(int accountId) {
@@ -97,22 +116,69 @@ public class ConsoleMenu implements IConsoleMenu {
     }
 
     // Метод для обработки ввода в меню пользователя
-    private void handleUserMenuInput() {
+    private void handleUserMenuInput(int userId) {
         int choice = scanner.nextInt();
         scanner.nextLine();
         switch (choice) {
-            case 1:
-                System.out.println("Просмотр профиля");
+            case 1://Просмотр профиля
+                viewProfile(userId);
                 break;
-            case 2:
-                System.out.println("Просмотр транзакций");
+            case 2://Просмотр баланса
+                viewBalance(userId);
                 break;
-            case 3:
+            case 3://Пополнение счета
+                accountService.deposit(userId);
+                break;
+            case 4://Снятие средств
+                accountService.withdraw(userId);
+                break;
+            case 5://Открытие нового счета
+                openNewAccount(userId);
+                break;
+            case 6://Закрытие счета
+               accountService.closeAccount(userId);
+                break;
+            case 7://Просмотр истории операций
+                viewTransactionHistory(userId);
+                break;
+            case 8://Обмен валют
+                exchangeCurrency(userId);
+                break;
+            case 9://Выйти из системы
                 showMainMenu();
                 break;
             default:
                 System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
-                showUserMenu(123); // Замените 123 на фактический идентификатор пользователя
+                handleUserMenuInput(userId);
+        }
+    }
+
+// Метод для обработки ввода в меню Администратора
+    private void handleAdminMenuInput(int userId) {
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        switch (choice) {
+            case 1://Изменение курса валюты
+                changeCurrencyRate();
+                break;
+            case 2://Добавление/удаление валюты
+                addOrRemoveCurrency();
+                break;
+            case 3://Просмотр операций пользователя
+                viewUserTransactions();
+                break;
+            case 4://Просмотр операций по валюте
+                viewCurrencyTransactions();
+                break;
+            case 5://Назначение другого пользователя администратором
+                appointAdministrator();
+                break;
+            case 6://Выйти из системы
+                showMainMenu();
+                break;
+            default:
+                System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
+                handleAdminMenuInput(userId);
         }
     }
 
