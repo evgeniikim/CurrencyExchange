@@ -38,4 +38,13 @@ public class AccountRepository implements IAccountRepository {
             System.out.println("Счет с указанным идентификатором не найден.");
         }
     }
+
+    @Override
+    public int getNextAccountId() {
+        return accounts.keySet()
+                       .stream()
+                       .max(Integer::compare)
+                       .map(maxId-> maxId +1)
+                       .orElse(1);
+    }
 }

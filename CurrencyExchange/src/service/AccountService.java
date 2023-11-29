@@ -85,6 +85,6 @@ public class AccountService implements IAccountService {
 
     // Метод генерации идентификатора счета
     private int generateAccountId() {
-        return accountRepository.getAllAccounts().size() + 1;
+        return accountRepository.getNextAccountId();
     }
 }

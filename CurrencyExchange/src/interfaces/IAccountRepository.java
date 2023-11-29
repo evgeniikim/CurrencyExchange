@@ -6,4 +6,5 @@ public interface IAccountRepository {
     IAccountModel findAccountById(int accountId);
     void deleteAccount(int accountId);
     void updateAccount(IAccountModel account);
+    int getNextAccountId();
 }
