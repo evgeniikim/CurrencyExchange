@@ -2,8 +2,10 @@ package model;
 
 import interfaces.*;
 
-public class UserModel  implements IUserModel {
-    // Поля класса
+import java.io.Serializable;
+
+public class UserModel  implements IUserModel, Serializable {
+    private static final long serialVersionUID = 1L;
     private int userId;
     private String name;
     private String email;

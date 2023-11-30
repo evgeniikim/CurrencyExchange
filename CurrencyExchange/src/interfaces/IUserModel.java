@@ -1,7 +1,9 @@
 package interfaces;
 
 
-public interface IUserModel {
+import java.io.Serializable;
+
+public interface IUserModel extends Serializable {
     int getUserId();
     String getName();
     String getEmail();
