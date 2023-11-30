@@ -1,5 +1,6 @@
 
 import repository.AccountRepository;
+import repository.CurrencyRepository;
 import repository.UserRepository;
 import service.*;
 import view.ConsoleMenu;
@@ -12,7 +13,9 @@ public class Main {
         UserRepository userRepository = new UserRepository();
         UserService userService = new UserService(userRepository);
         TransactionService transactionService = new TransactionService();
-        CurrencyService currencyService = new CurrencyService();
+
+        CurrencyRepository currencyRepository = new CurrencyRepository();
+        CurrencyService currencyService = new CurrencyService(currencyRepository);
 
         ConsoleMenu consoleMenu = new ConsoleMenu(accountService, userService, transactionService, currencyService);
         consoleMenu.showMainMenu();
