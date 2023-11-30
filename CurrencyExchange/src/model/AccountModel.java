@@ -2,8 +2,10 @@ package model;
 
 import interfaces.IAccountModel;
 import interfaces.ICurrencyModel;
+import java.io.Serializable;
 
-public class AccountModel implements IAccountModel {
+public class AccountModel implements IAccountModel, Serializable {
+    private static final long serialVersionUID = 1L;
     private int accountId;          // Уникальный идентификатор счета
     private int userId;             // Идентификатор пользователя, которому принадлежит счет
     private ICurrencyModel currency;// Модель валюты счета
