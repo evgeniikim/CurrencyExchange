@@ -13,6 +13,7 @@ public class AccountService implements IAccountService {
         this.accountRepository = accountRepository;
     }
 
+    //Метод открытия счета
     @Override
     public void createAccount(int userId, ICurrencyModel currency) {
         // Генерация нового идентификатора счета
@@ -27,6 +28,7 @@ public class AccountService implements IAccountService {
         System.out.println("Счет успешно создан. Идентификатор счета: " + newAccountId);
     }
 
+// Метод закрытия счета
     @Override
     public void closeAccount(int accountId) {
         // Поиск счета по идентификатору

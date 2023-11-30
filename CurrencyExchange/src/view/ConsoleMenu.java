@@ -133,7 +133,7 @@ public class ConsoleMenu implements IConsoleMenu {
                 accountService.withdraw(userId);
                 break;
             case 5://Открытие нового счета
-                openNewAccount(userId);
+                accountService.createAccount;
                 break;
             case 6://Закрытие счета
                accountService.closeAccount(userId);
