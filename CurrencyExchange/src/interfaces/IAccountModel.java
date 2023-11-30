@@ -1,6 +1,8 @@
 package interfaces;
 
-public interface IAccountModel {
+import java.io.Serializable;
+
+public interface IAccountModel extends Serializable{
     int getAccountId();
     int getUserId();
     ICurrencyModel getCurrency();

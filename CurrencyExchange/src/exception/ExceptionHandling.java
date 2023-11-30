@@ -1,10 +1,11 @@
 package exception;
 
 import interfaces.*;
-public class ExceptionHandling implements IExceptionHandling {
+public class ExceptionHandling {
 
-    @Override
-    public void handleException(Exception e) {
+    private static ExceptionHandling exceptionHandler = new ExceptionHandling();
+
+    public static void handleException(Exception e) {
         // Логирование исключения
         logException(e);
 
@@ -12,7 +13,7 @@ public class ExceptionHandling implements IExceptionHandling {
         System.out.println("Произошла ошибка: " + e.getMessage());
     }
 
-    private void logException(Exception e) {
+    private static void logException(Exception e) {
         // Здесь можно добавить логирование исключений, например, запись в файл или отправку в систему мониторинга
         System.err.println("Исключение зарегистрировано: " + e);
     }
