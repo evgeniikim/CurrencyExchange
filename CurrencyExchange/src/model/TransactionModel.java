@@ -1,10 +1,13 @@
 package model;
 
 import interfaces.*;
+
+import java.io.Serializable;
 import java.util.Date;
 
 
-public class TransactionModel implements ITransactionModel {
+public class TransactionModel implements ITransactionModel, Serializable {
+    private static final long serialVersionUID = 1L;
     private int transactionId;
     private int accountId;
     private TransactionType type;
