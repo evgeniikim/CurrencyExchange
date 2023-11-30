@@ -4,6 +4,8 @@ import interfaces.*;
 import repository.TransactionRepository;
 import model.TransactionModel;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public class TransactionService implements ITransactionService {
@@ -58,7 +60,9 @@ public class TransactionService implements ITransactionService {
 
         // Создание записи о транзакции
         TransactionType transactionType = TransactionType.CURRENCY_EXCHANGE;
-        ITransactionModel transaction = new TransactionModel(accountFrom.getUserId(), transactionType, amount);
+        var transactionId = transactionRepository.getNextTransactionId();
+        var transactionDate = new Date();
+        ITransactionModel transaction = new TransactionModel(transactionId, accountFrom.getUserId(), transactionType, amount, transactionDate);
         transactionRepository.saveTransaction(transaction);
         System.out.println("Обмен валюты выполнен успешно.");
     }
