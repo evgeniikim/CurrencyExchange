@@ -1,6 +1,8 @@
 package interfaces;
 
-public interface ICurrencyModel {
+import java.io.Serializable;
+
+public interface ICurrencyModel extends Serializable {
     String getCurrencyCode();
     String getName();
 

@@ -1,8 +1,11 @@
 package model;
 
 import interfaces.*;
-public class CurrencyModel implements ICurrencyModel {
-    // Поля класса
+
+import java.io.Serializable;
+
+public class CurrencyModel implements ICurrencyModel, Serializable {
+    private static final long serialVersionUID = 1L;
     private String currencyCode;
     private String name;
 
@@ -20,6 +23,12 @@ public class CurrencyModel implements ICurrencyModel {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String getCode() {
+        return currencyCode;
+    }
+
 
     @Override
     public String toString() {

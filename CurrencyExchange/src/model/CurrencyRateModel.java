@@ -1,9 +1,11 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Date;
 import interfaces.*;
 
-public class CurrencyRateModel implements ICurrencyRateModel {
+public class CurrencyRateModel implements ICurrencyRateModel , Serializable {
+    private static final long serialVersionUID = 1L;
     private String currencyCode;
     private double rate;
     private Date date;
