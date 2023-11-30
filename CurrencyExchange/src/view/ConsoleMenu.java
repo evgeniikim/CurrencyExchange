@@ -144,7 +144,7 @@ public class ConsoleMenu implements IConsoleMenu {
                 viewTransactionHistory(userId);
                 break;
             case 8://Обмен валют
-                transactionService.exchangeCurrency();
+               // transactionService.exchangeCurrency();
                 break;
             case 9://Выйти из системы
                 showMainMenu();
