@@ -25,4 +25,12 @@ public class TransactionRepository implements ITransactionRepository {
     public List<ITransactionModel> findTransactionsByUserId(int userId) {
         return userTransactions.getOrDefault(userId, new ArrayList<>());
     }
+    @Override
+    public int getNextTransactionId() {
+        return userTransactions.keySet()
+                .stream()
+                .max(Integer::compare)
+                .map(maxId-> maxId +1)
+                .orElse(1);
+    }
 }

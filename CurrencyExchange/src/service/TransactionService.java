@@ -3,6 +3,7 @@ package service;
 import interfaces.*;
 import repository.TransactionRepository;
 import model.TransactionModel;
+
 import java.util.List;
 
 public class TransactionService implements ITransactionService {
@@ -22,8 +23,6 @@ public class TransactionService implements ITransactionService {
         this.currencyService = currencyService;
     }
 
-
-
     @Override
     public void performTransaction(ITransactionModel transaction) {
         transactionRepository.saveTransaction(transaction);
@@ -34,6 +33,7 @@ public class TransactionService implements ITransactionService {
         return transactionRepository.findTransactionsByUserId(userId);
     }
 
+    //Метод обмена валюты
     @Override
     public void exchangeCurrency(int accountIdFrom, int accountIdTo, double amount) {
         // Получение информации о валютах счетов
@@ -57,9 +57,14 @@ public class TransactionService implements ITransactionService {
         accountRepository.updateAccount(accountTo);
 
         // Создание записи о транзакции
-        ITransactionModel transaction = new TransactionModel(accountFrom.getUserId(), TransactionType.CURRENCY_EXCHANGE, amount);
+        TransactionType transactionType = TransactionType.CURRENCY_EXCHANGE;
+        ITransactionModel transaction = new TransactionModel(accountFrom.getUserId(), transactionType, amount);
         transactionRepository.saveTransaction(transaction);
-
         System.out.println("Обмен валюты выполнен успешно.");
+    }
+
+    // Метод генерации идентификатора транзакции
+    private int getNextTransactionId() {
+        return transactionRepository.getNextTransactionId();
     }
 }
