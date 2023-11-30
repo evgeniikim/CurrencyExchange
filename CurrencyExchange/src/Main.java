@@ -12,8 +12,9 @@ public class Main {
         UserRepository userRepository = new UserRepository();
         UserService userService = new UserService(userRepository);
         TransactionService transactionService = new TransactionService();
+        CurrencyService currencyService = new CurrencyService();
 
-        ConsoleMenu consoleMenu = new ConsoleMenu(accountService, userService, transactionService);
+        ConsoleMenu consoleMenu = new ConsoleMenu(accountService, userService, transactionService, currencyService);
         consoleMenu.showMainMenu();
 
     }

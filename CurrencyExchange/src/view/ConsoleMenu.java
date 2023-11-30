@@ -11,11 +11,13 @@ public class ConsoleMenu implements IConsoleMenu {
     private final AccountService accountService;
     private final UserService userService;
     private final TransactionService transactionService;
+    private final CurrencyService currencyService;
 
-    public ConsoleMenu(AccountService accountService, UserService userService, TransactionService transactionService) {
+    public ConsoleMenu(AccountService accountService, UserService userService, TransactionService transactionService, CurrencyService currencyService) {
         this.accountService = accountService;
         this.userService = userService;
         this.transactionService = transactionService;
+        this.currencyService = currencyService;
         this.scanner = new Scanner(System.in);
     }
 
@@ -133,7 +135,7 @@ public class ConsoleMenu implements IConsoleMenu {
                 accountService.withdraw(userId);
                 break;
             case 5://Открытие нового счета
-                accountService.createAccount;
+                accountService.createAccount(userId);
                 break;
             case 6://Закрытие счета
                accountService.closeAccount(userId);
@@ -142,7 +144,7 @@ public class ConsoleMenu implements IConsoleMenu {
                 viewTransactionHistory(userId);
                 break;
             case 8://Обмен валют
-                exchangeCurrency(userId);
+                transactionService.exchangeCurrency();
                 break;
             case 9://Выйти из системы
                 showMainMenu();
