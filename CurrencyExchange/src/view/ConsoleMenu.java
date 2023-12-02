@@ -1,9 +1,7 @@
 package view;
 
-import interfaces.IConsoleMenu;
-import interfaces.ICurrencyRateModel;
-import interfaces.ITransactionModel;
-import interfaces.IUserModel;
+import interfaces.*;
+import model.CurrencyModel;
 import model.CurrencyRateModel;
 import service.*;
 
@@ -149,10 +147,6 @@ public class ConsoleMenu implements IConsoleMenu {
             case 7://Просмотр истории операций
                 handleViewTransactionHistory(currentUser.getUserId());
                 break;
-
-            default:
-                System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
-                showUserMenu(currentUser.getUserId());
             case 8://Обмен валют
                 handleCurrencyExchange();
                 break;
@@ -173,11 +167,6 @@ public class ConsoleMenu implements IConsoleMenu {
             case 1://Изменение курса валюты
                 handleUpdateCurrencyRate();
                 break;
-
-            default:
-                System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
-                showAdminMenu(userId);
-
             case 2://Добавление/удаление валюты
                 addOrRemoveCurrency();
                 break;
@@ -263,10 +252,7 @@ public class ConsoleMenu implements IConsoleMenu {
         // После просмотра профиля, показываем снова меню пользователя
         showUserMenu(currentUser.getUserId());
     }
-
-
-
-
+    
     // Метод для обработки пополнения депозита
     private void handleDeposit() {
         System.out.println("Введите идентификатор счета для пополнения депозита:");
@@ -319,7 +305,7 @@ public class ConsoleMenu implements IConsoleMenu {
         // нужно добавить логику для выбора валюты, например, считывание кода валюты или ее названия
 
         // вызов метода открытия нового счета
-        accountService.createAccount(userId, selectedCurrency); // Замените selectedCurrency на выбранную валюту
+        accountService.createAccount(userId, selectedCurrency); // Замени selectedCurrency на выбранную валюту
     }
     // Метод для обработки закрытия счета
     private void handleCloseAccount() {
@@ -375,6 +361,111 @@ public class ConsoleMenu implements IConsoleMenu {
 
         // После обновления курса валюты, показываем снова меню администратора
         showAdminMenu();
+    }
+    // Метод реализация добавления/удаления валюты
+    private void addOrRemoveCurrency() {
+        System.out.println("Выберите действие:");
+        System.out.println("1. Добавить новую валюту");
+        System.out.println("2. Удалить существующую валюту");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (choice) {
+            case 1:
+                handleAddCurrency();
+                break;
+            case 2:
+                handleRemoveCurrency();
+                break;
+            default:
+                System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
+                showAdminMenu(userId);
+        }
+    }
+
+    // Метод для обработки добавления новой валюты
+    private void handleAddCurrency() {
+        System.out.println("Введите код новой валюты:");
+        String currencyCode = scanner.nextLine();
+
+        System.out.println("Введите название новой валюты:");
+        String currencyName = scanner.nextLine();
+
+        // Создание новой валюты с использованием вашего класса CurrencyModel
+        ICurrencyModel newCurrency = new CurrencyModel(currencyCode, currencyName);
+
+        // Сохранение новой валюты в репозитории
+        currencyService.addCurrency(newCurrency);
+
+        System.out.println("Новая валюта успешно добавлена.");
+        showAdminMenu(userId);
+    }
+
+    // Метод для обработки удаления существующей валюты
+    private void handleRemoveCurrency() {
+        System.out.println("Введите код валюты, которую нужно удалить:");
+        String currencyCode = scanner.nextLine();
+
+        // Удаление валюты из репозитория
+        currencyService.removeCurrency(currencyCode);
+
+        System.out.println("Валюта успешно удалена.");
+        showAdminMenu(userId);
+    }
+
+    // Метод для обработки просмотра операций пользователя
+    private void viewUserTransactions() {
+        System.out.println("Введите идентификатор пользователя:");
+        int userId = scanner.nextInt();
+        scanner.nextLine();
+        // Получение списка транзакций для пользователя
+        List<ITransactionModel> userTransactions = transactionService.getTransactionHistory(userId);
+
+        if (userTransactions.isEmpty()) {
+            System.out.println("Для указанного пользователя нет операций.");
+        } else {
+            System.out.println("Операции пользователя с идентификатором " + userId + ":");
+            for (ITransactionModel transaction : userTransactions) {
+                System.out.println(transaction);
+            }
+        }
+        showUserMenu(userId);
+    }
+
+    // Метод для обработки просмотра операций по валюте
+    private void viewCurrencyTransactions() {
+        System.out.println("Введите код валюты:");
+        String currencyCode = scanner.nextLine();
+
+        // Получение списка транзакций для валюты
+        List<ITransactionModel> currencyTransactions = transactionService.getTransactionHistoryByCurrencyCode(currencyCode);
+
+        if (currencyTransactions.isEmpty()) {
+            System.out.println("Для указанной валюты нет операций.");
+        } else {
+            System.out.println("Операции по валюте с кодом " + currencyCode + ":");
+            for (ITransactionModel transaction : currencyTransactions) {
+                System.out.println(transaction);
+            }
+        }
+
+        // После просмотра операций, показываем снова меню пользователя
+        showUserMenu(currentUser.getUserId());
+    }
+
+    // Метод для обработки назначения другого пользователя администратором
+    private void appointAdministrator() {
+        System.out.println("Введите идентификатор пользователя, которого вы хотите назначить администратором:");
+        int userIdToAppoint = scanner.nextInt();
+        scanner.nextLine();
+        // Вызов метода сервиса пользователя для изменения роли на администратора
+        userService.updateUserProfile(userIdToAppoint);
+
+        System.out.println("Пользователь успешно назначен администратором.");
+
+        // После назначения администратора, показываем снова меню администратора
+        showAdminMenu(currentUser.getUserId());
     }
 
 
