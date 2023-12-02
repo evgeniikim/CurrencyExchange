@@ -252,7 +252,7 @@ public class ConsoleMenu implements IConsoleMenu {
         // После просмотра профиля, показываем снова меню пользователя
         showUserMenu(currentUser.getUserId());
     }
-    
+
     // Метод для обработки пополнения депозита
     private void handleDeposit() {
         System.out.println("Введите идентификатор счета для пополнения депозита:");
@@ -360,7 +360,7 @@ public class ConsoleMenu implements IConsoleMenu {
         }
 
         // После обновления курса валюты, показываем снова меню администратора
-        showAdminMenu();
+        showAdminMenu(userId);
     }
     // Метод реализация добавления/удаления валюты
     private void addOrRemoveCurrency() {
