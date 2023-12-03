@@ -1,6 +1,7 @@
 package interfaces;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 public interface ITransactionModel extends Serializable {
@@ -10,4 +11,5 @@ public interface ITransactionModel extends Serializable {
     double getAmount();
     Date getTransactionDate();
     String getCurrencyCode();
+    void setCurrency(ICurrencyModel currency);
 }

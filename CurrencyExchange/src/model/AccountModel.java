@@ -62,4 +62,8 @@ public class AccountModel implements IAccountModel, Serializable {
             System.out.println("Недопустимая сумма для снятия или недостаточно средств на счете.");
         }
     }
+    @Override
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
 }

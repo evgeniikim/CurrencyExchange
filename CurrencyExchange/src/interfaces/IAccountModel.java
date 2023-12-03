@@ -10,5 +10,5 @@ public interface IAccountModel extends Serializable{
     void setCurrency(ICurrencyModel currency);
     void deposit(double amount);
     void withdraw(double amount);
-    
+    void setBalance(double balance);
 }

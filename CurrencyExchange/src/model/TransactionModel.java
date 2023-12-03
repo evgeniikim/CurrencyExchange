@@ -1,7 +1,6 @@
 package model;
 
 import interfaces.*;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -65,4 +64,7 @@ public class TransactionModel implements ITransactionModel, Serializable {
         return currency.getCurrencyCode();
     }
 
+    public void setCurrency(ICurrencyModel currency) {
+        this.currency = currency;
+    }
 }
