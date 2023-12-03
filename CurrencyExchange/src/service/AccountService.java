@@ -1,13 +1,10 @@
 package service;
 
-import interfaces.IAccountModel;
-import interfaces.IAccountRepository;
-import interfaces.IAccountService;
-import interfaces.ICurrencyModel;
+import interfaces.*;
 import model.AccountModel;
 
 public class AccountService implements IAccountService {
-    private IAccountRepository accountRepository;
+    private final IAccountRepository accountRepository;
 
     public AccountService(IAccountRepository accountRepository) {
         this.accountRepository = accountRepository;

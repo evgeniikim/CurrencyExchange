@@ -39,6 +39,25 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public void updateUserProfile(int userId) {
+        // Находим пользователя по идентификатору
+        IUserModel user = userRepository.findUserById(userId);
+
+        // Проверка, найден ли пользователь
+        if (user != null) {
+            // Устанавливаем роль пользователя на администратора
+            user.setRole(UserRole.ADMIN);
+
+            // Обновляем профиль пользователя
+            userRepository.updateUser(user);
+            System.out.println("Профиль пользователя обновлен. Пользователь назначен администратором.");
+        } else {
+            System.out.println("Пользователь не найден.");
+        }
+    }
+
+    /*
+    @Override
     public void updateUserProfile(IUserModel user) {
         // Обновление профиля пользователя
         if (user != null && userRepository.findUserById(user.getUserId()) != null) {
@@ -48,6 +67,7 @@ public class UserService implements IUserService {
             System.out.println("Пользователь не найден.");
         }
     }
+*/
 
     @Override
     public IUserModel getUserById(int userId) {

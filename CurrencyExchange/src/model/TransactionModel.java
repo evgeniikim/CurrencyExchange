@@ -14,6 +14,8 @@ public class TransactionModel implements ITransactionModel, Serializable {
     private double amount;
     private Date transactionDate;
 
+    private ICurrencyModel currency;
+
     public TransactionModel(int transactionId, int accountId, TransactionType type, double amount, Date transactionDate) {
         this.transactionId = transactionId;
         this.accountId = accountId;
@@ -57,4 +59,10 @@ public class TransactionModel implements ITransactionModel, Serializable {
                 ", transactionDate=" + transactionDate +
                 '}';
     }
+
+    @Override
+    public String getCurrencyCode() {
+        return currency.getCurrencyCode();
+    }
+
 }

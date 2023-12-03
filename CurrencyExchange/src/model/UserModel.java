@@ -10,6 +10,7 @@ public class UserModel  implements IUserModel, Serializable {
     private String name;
     private String email;
     private String password;
+    UserRole role = UserRole.CLIENT;
 
     // Конструктор
     public UserModel(int userId, String name, String email, String password) {
@@ -19,7 +20,9 @@ public class UserModel  implements IUserModel, Serializable {
         this.password = password;
     }
 
-    
+    public UserModel(UserRole role) {
+        this.role = role;
+    }
 
     // Getters
     public int getUserId() {
@@ -63,5 +66,13 @@ public class UserModel  implements IUserModel, Serializable {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    public UserRole getRole() {
+        return role;
     }
 }

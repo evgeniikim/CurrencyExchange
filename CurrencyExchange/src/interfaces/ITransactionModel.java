@@ -9,4 +9,5 @@ public interface ITransactionModel extends Serializable {
     TransactionType getType();
     double getAmount();
     Date getTransactionDate();
+    String getCurrencyCode();
 }

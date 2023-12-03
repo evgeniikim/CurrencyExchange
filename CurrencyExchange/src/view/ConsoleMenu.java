@@ -16,6 +16,7 @@ public class ConsoleMenu implements IConsoleMenu {
     private final UserService userService;
     private final TransactionService transactionService;
     private final CurrencyService currencyService;
+    private IUserModel currentUser;
 
     public ConsoleMenu(AccountService accountService, UserService userService, TransactionService transactionService, CurrencyService currencyService) {
         this.accountService = accountService;
@@ -24,6 +25,10 @@ public class ConsoleMenu implements IConsoleMenu {
         this.currencyService = currencyService;
         this.scanner = new Scanner(System.in);
     }
+
+    // public void setCurrentUser(IUserModel user) {
+    //     this.currentUser = user;
+    // }
 
     // Реализация метода для показа главного меню
     @Override
@@ -73,16 +78,6 @@ public class ConsoleMenu implements IConsoleMenu {
         handleAdminMenuInput(userId);
     }
 
-    // Реализация метода для показа меню аккаунта
-    @Override
-    public void showAccountMenu(int accountId) {
-        System.out.println("=== Меню аккаунта ===");
-        System.out.println("1. Просмотр баланса");
-        System.out.println("2. Совершить транзакцию");
-        System.out.println("3. Вернуться в меню пользователя");
-        handleAccountMenuInput();
-    }
-
     // Метод для обработки ввода в главном меню
     private void handleMainMenuInput() {
         int choice = scanner.nextInt();
@@ -101,16 +96,17 @@ public class ConsoleMenu implements IConsoleMenu {
         }
     }
 
-    // Метод для обработки ввода в меню входа
+    // Метод для обработки ввода в меню входа в систему
     private void handleLoginMenuInput() {
         int choice = scanner.nextInt();
         scanner.nextLine();
+
         switch (choice) {
             case 1:
-                System.out.println("Введите имя пользователя");
+                handleUsernameInput();
                 break;
             case 2:
-                System.out.println("Введите пароль");
+                handlePasswordInput();
                 break;
             case 3:
                 showMainMenu();
@@ -118,6 +114,27 @@ public class ConsoleMenu implements IConsoleMenu {
             default:
                 System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
                 showLoginMenu();
+        }
+    }
+
+    @Override
+    public IUserModel login(String email, String password) {
+        IUserModel loggedInUser = userService.login(email, password);
+
+        if (loggedInUser != null) {
+            IUserModel user = loggedInUser;
+            System.out.println("Успешный вход в систему.");
+
+            if ("admin".equals(user.getRole())) {
+                handleAdminMenuInput(user.getUserId());
+            } else {
+                handleUserMenuInput(user.getUserId());
+            }
+
+            return user;
+        } else {
+            System.out.println("Неверный email или пароль.");
+            return null;
         }
     }
 
@@ -139,13 +156,13 @@ public class ConsoleMenu implements IConsoleMenu {
                 handleWithdrawal();
                 break;
             case 5://Открытие нового счета
-                handleCreateAccount();
+                handleCreateAccount(userId);
                 break;
             case 6://Закрытие счета
                 handleCloseAccount();
                 break;
             case 7://Просмотр истории операций
-                handleViewTransactionHistory(currentUser.getUserId());
+                handleViewTransactionHistory(userId);
                 break;
             case 8://Обмен валют
                 handleCurrencyExchange();
@@ -159,7 +176,7 @@ public class ConsoleMenu implements IConsoleMenu {
         }
     }
 
-// Метод для обработки ввода в меню Администратора
+    // Метод для обработки ввода в меню Администратора
     private void handleAdminMenuInput(int userId) {
         int choice = scanner.nextInt();
         scanner.nextLine();
@@ -185,55 +202,6 @@ public class ConsoleMenu implements IConsoleMenu {
             default:
                 System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
                 handleAdminMenuInput(userId);
-        }
-    }
-
-    // Метод для обработки ввода в меню аккаунта
-    private void handleAccountMenuInput() {
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-        switch (choice) {
-            case 1:
-                System.out.println("Просмотр баланса");
-                break;
-            case 2:
-                System.out.println("Совершить транзакцию");
-                handleTransactionMenu();
-                break;
-            case 3:
-                showUserMenu(123); // Заменить 123 на фактический идентификатор пользователя
-                break;
-            default:
-                System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
-                showAccountMenu(456); // Заменить 456 на фактический идентификатор аккаунта
-        }
-    }
-
-    // Метод для обработки ввода в меню транзакции
-    private void handleTransactionMenu() {
-        System.out.println("Выберите тип транзакции:");
-        System.out.println("1. Пополнение счета");
-        System.out.println("2. Снятие средств");
-        System.out.println("3. Обмен валюты");
-
-        int transactionChoice = scanner.nextInt();
-        scanner.nextLine();
-
-        switch (transactionChoice) {
-            case 1:
-                // Пополнения счета
-                handleDeposit();
-                break;
-            case 2:
-                // Снятия средств
-                handleWithdrawal();
-                break;
-            case 3:
-                // Обмена валюты
-                handleCurrencyExchange();
-                break;
-            default:
-                System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
         }
     }
 
@@ -300,13 +268,30 @@ public class ConsoleMenu implements IConsoleMenu {
     }
 
     // Метод для обработки открытия нового счета
-    private void handleCreateAccount() {
+    private void handleCreateAccount(int userId) {
         System.out.println("Выберите валюту для нового счета:");
-        // нужно добавить логику для выбора валюты, например, считывание кода валюты или ее названия
 
-        // вызов метода открытия нового счета
-        accountService.createAccount(userId, selectedCurrency); // Замени selectedCurrency на выбранную валюту
+        // Выводим список доступных валют
+        List<ICurrencyModel> currencies = currencyService.getAllCurrencies();
+        for (int i = 0; i < currencies.size(); i++) {
+            System.out.println((i + 1) + ". " + currencies.get(i).getCurrencyCode() + " - " + currencies.get(i).getName());
+        }
+
+        int currencyChoice = scanner.nextInt();
+        scanner.nextLine();
+
+        // Проверяем, что выбор находится в допустимых пределах
+        if (currencyChoice >= 1 && currencyChoice <= currencies.size()) {
+            // Получаем выбранную валюту
+            ICurrencyModel selectedCurrency = currencies.get(currencyChoice - 1);
+
+            // Вызываем метод открытия нового счета
+            accountService.createAccount(userId, selectedCurrency);
+        } else {
+            System.out.println("Неверный выбор валюты.");
+        }
     }
+
     // Метод для обработки закрытия счета
     private void handleCloseAccount() {
         System.out.println("Введите идентификатор счета для закрытия:");
@@ -360,8 +345,9 @@ public class ConsoleMenu implements IConsoleMenu {
         }
 
         // После обновления курса валюты, показываем снова меню администратора
-        showAdminMenu(userId);
+        showAdminMenu(currentUser.getUserId());
     }
+
     // Метод реализация добавления/удаления валюты
     private void addOrRemoveCurrency() {
         System.out.println("Выберите действие:");
@@ -380,7 +366,7 @@ public class ConsoleMenu implements IConsoleMenu {
                 break;
             default:
                 System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
-                showAdminMenu(userId);
+                showAdminMenu(currentUser.getUserId());
         }
     }
 
@@ -399,7 +385,7 @@ public class ConsoleMenu implements IConsoleMenu {
         currencyService.addCurrency(newCurrency);
 
         System.out.println("Новая валюта успешно добавлена.");
-        showAdminMenu(userId);
+        showAdminMenu(currentUser.getUserId());
     }
 
     // Метод для обработки удаления существующей валюты
@@ -411,7 +397,7 @@ public class ConsoleMenu implements IConsoleMenu {
         currencyService.removeCurrency(currencyCode);
 
         System.out.println("Валюта успешно удалена.");
-        showAdminMenu(userId);
+        showAdminMenu(currentUser.getUserId());
     }
 
     // Метод для обработки просмотра операций пользователя
@@ -468,5 +454,50 @@ public class ConsoleMenu implements IConsoleMenu {
         showAdminMenu(currentUser.getUserId());
     }
 
+    // Метод для обработки ввода имени пользователя
+    private void handleUsernameInput() {
+        System.out.println("Введите имя пользователя:");
+        String username = scanner.nextLine();
 
+        // Вызов метода входа по имени пользователя
+        IUserModel user = userService.login(username, null);
+
+        if (user != null) {
+            // Вход успешен, показываем главное меню
+            showMainMenu();
+        } else {
+            System.out.println("Пользователь с таким именем не найден.");
+            showLoginMenu();
+        }
+    }
+
+    // Метод для обработки ввода пароля
+    private void handlePasswordInput() {
+        System.out.println("Введите пароль:");
+        String password = scanner.nextLine();
+
+        // Вызов метода входа по паролю
+        IUserModel user = userService.login(null, password);
+
+        if (user != null) {
+            // Вход успешен, показываем главное меню
+            showMainMenu();
+        } else {
+            System.out.println("Неверный пароль.");
+            showLoginMenu();
+        }
+    }
+
+    //Метод просмотра баланса пользователя
+    private void viewBalance(int userId) {
+        // Поиск счета пользователя по его идентификатору
+        IAccountModel account = accountService.getAccountById(userId);
+
+        if (account != null) {
+            // Вывод баланса
+            System.out.println("Баланс счета: " + account.getBalance());
+        } else {
+            System.out.println("Счет пользователя не найден.");
+        }
+    }
 }

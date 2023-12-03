@@ -7,4 +7,5 @@ public interface ITransactionRepository extends IExportImportFile  {
     List<ITransactionModel> findTransactionsByUserId(int userId);
 
     int getNextTransactionId();
+    List<ITransactionModel> getAllTransactions();
 }

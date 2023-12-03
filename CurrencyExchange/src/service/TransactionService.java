@@ -7,6 +7,7 @@ import model.TransactionModel;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TransactionService implements ITransactionService {
     private ITransactionRepository transactionRepository;
@@ -70,5 +71,15 @@ public class TransactionService implements ITransactionService {
     // Метод генерации идентификатора транзакции
     private int getNextTransactionId() {
         return transactionRepository.getNextTransactionId();
+    }
+
+    //Метод, который будет возвращать список транзакций всех пользователей по указанному коду валюты
+    @Override
+    public List<ITransactionModel> getTransactionHistoryByCurrencyCode(String currencyCode) {
+        List<ITransactionModel> allTransactions = transactionRepository.getAllTransactions();
+
+        return allTransactions.stream()
+                .filter(transaction -> transaction.getCurrencyCode().equals(currencyCode))
+                .collect(Collectors.toList());
     }
 }

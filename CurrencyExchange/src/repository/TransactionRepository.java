@@ -60,4 +60,12 @@ public class TransactionRepository implements ITransactionRepository {
             return -1; // Код ошибки
         }
     }
+
+    //Метод вывода всех транзакций
+    @Override
+    public List<ITransactionModel> getAllTransactions() {
+        List<ITransactionModel> allTransactions = new ArrayList<>();
+        userTransactions.values().forEach(allTransactions::addAll);
+        return allTransactions;
+    }
 }
