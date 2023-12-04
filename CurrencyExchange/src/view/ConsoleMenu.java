@@ -65,7 +65,6 @@ public class ConsoleMenu implements IConsoleMenu {
     public void showLoginMenu() {
         System.out.println("=== Меню входа ===");
         System.out.println("1. Введите имя пользователя");
-       // System.out.println("2. Введите пароль");
         System.out.println("2. Вернуться в главное меню");
         handleLoginMenuInput();
     }
@@ -125,38 +124,14 @@ public class ConsoleMenu implements IConsoleMenu {
 
         switch (choice) {
             case 1:
-                handleUsernameInput();
+                handleLoginInput();
                 break;
-           // case 2:
-             //   handlePasswordInput();
-             //   break;
             case 2:
                 showMainMenu();
                 break;
             default:
                 System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
                 showLoginMenu();
-        }
-    }
-
-    @Override
-    public IUserModel login(String email, String password) {
-        IUserModel loggedInUser = userService.login(email, password);
-
-        if (loggedInUser != null) {
-            IUserModel user = loggedInUser;
-            System.out.println("Успешный вход в систему.");
-
-            if ("admin".equals(user.getRole())) {
-                handleAdminMenuInput(user.getUserId());
-            } else {
-                handleUserMenuInput(user.getUserId());
-            }
-
-            return user;
-        } else {
-            System.out.println("Неверный email или пароль.");
-            return null;
         }
     }
 
@@ -479,37 +454,26 @@ public class ConsoleMenu implements IConsoleMenu {
         showAdminMenu(currentUser.getUserId());
     }
 
-    // Метод для обработки ввода имени пользователя
-    private void handleUsernameInput() {
-        System.out.println("Введите имя пользователя: Ваш E-mail");
+    // Метод для обработки ввода имени пользователя и пароля
+
+    private void handleLoginInput() {
+        System.out.println("Введите имя пользователя (Ваш E-mail):");
         String username = scanner.nextLine();
-
-        // Вызов метода входа по имени пользователя
-        IUserModel user = userService.login(username, null);
-
-        if (user != null) {
-            // Вход успешен, показываем главное меню
-            //showMainMenu();
-            handlePasswordInput();
-        } else {
-            System.out.println("Пользователь с таким именем не найден.");
-            showLoginMenu();
-        }
-    }
-
-    // Метод для обработки ввода пароля
-    private void handlePasswordInput() {
         System.out.println("Введите пароль:");
         String password = scanner.nextLine();
 
-        // Вызов метода входа по паролю
-        IUserModel user = userService.login(null, password);
+        // Вызов метода входа по имени пользователя и паролю
+        IUserModel user = userService.login(username, password);
 
         if (user != null) {
-            // Вход успешен, показываем главное меню
-            showMainMenu();
+            // Вход успешен, показываем соответствующее меню
+            if ("admin".equals(user.getRole())) {
+                handleAdminMenuInput(user.getUserId());
+            } else {
+                handleUserMenuInput(user.getUserId());
+            }
         } else {
-            System.out.println("Неверный пароль.");
+            System.out.println("Неверный email или пароль.");
             showLoginMenu();
         }
     }
@@ -530,6 +494,4 @@ public class ConsoleMenu implements IConsoleMenu {
     private void generateUsers() {
         userService.generateFakeUsers();
     }
-
-
 }
