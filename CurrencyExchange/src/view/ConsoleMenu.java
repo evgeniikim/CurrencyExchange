@@ -24,6 +24,20 @@ public class ConsoleMenu implements IConsoleMenu {
         this.transactionService = transactionService;
         this.currencyService = currencyService;
         this.scanner = new Scanner(System.in);
+        userService.loadData();
+        if(userService.getUsersCount()==0)
+        {
+            userService.generateStaticUsers();
+            userService.saveData();
+        }
+    }
+
+    protected void finalize() throws Throwable {
+        try {
+            userService.saveData();
+        } finally {
+            super.finalize();
+        }
     }
 
     // public void setCurrentUser(IUserModel user) {
@@ -506,7 +520,7 @@ public class ConsoleMenu implements IConsoleMenu {
     }
 
     private void generateUsers() {
-        userService.generateUsers();
+        userService.generateFakeUsers();
     }
 
 
