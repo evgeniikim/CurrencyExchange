@@ -58,8 +58,8 @@ public class ConsoleMenu implements IConsoleMenu {
     public void showLoginMenu() {
         System.out.println("=== Меню входа ===");
         System.out.println("1. Введите имя пользователя");
-        System.out.println("2. Введите пароль");
-        System.out.println("3. Вернуться в главное меню");
+       // System.out.println("2. Введите пароль");
+        System.out.println("2. Вернуться в главное меню");
         handleLoginMenuInput();
     }
 
@@ -120,10 +120,10 @@ public class ConsoleMenu implements IConsoleMenu {
             case 1:
                 handleUsernameInput();
                 break;
+           // case 2:
+             //   handlePasswordInput();
+             //   break;
             case 2:
-                handlePasswordInput();
-                break;
-            case 3:
                 showMainMenu();
                 break;
             default:
@@ -474,7 +474,7 @@ public class ConsoleMenu implements IConsoleMenu {
 
     // Метод для обработки ввода имени пользователя
     private void handleUsernameInput() {
-        System.out.println("Введите имя пользователя:");
+        System.out.println("Введите имя пользователя: Ваш E-mail");
         String username = scanner.nextLine();
 
         // Вызов метода входа по имени пользователя
@@ -482,7 +482,8 @@ public class ConsoleMenu implements IConsoleMenu {
 
         if (user != null) {
             // Вход успешен, показываем главное меню
-            showMainMenu();
+            //showMainMenu();
+            handlePasswordInput();
         } else {
             System.out.println("Пользователь с таким именем не найден.");
             showLoginMenu();
