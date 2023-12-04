@@ -30,11 +30,18 @@ public class ConsoleMenu implements IConsoleMenu {
             userService.generateStaticUsers();
             userService.saveData();
         }
+
+        transactionService.loadData();
+        currencyService.loadData();
+        accountService.loadData();
     }
 
     protected void finalize() throws Throwable {
         try {
             userService.saveData();
+            transactionService.saveData();
+            currencyService.saveData();
+            accountService.saveData();
         } finally {
             super.finalize();
         }
