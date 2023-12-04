@@ -6,5 +6,9 @@ public interface IUserService {
     void updateUserProfile(IUserModel user);
     IUserModel getUserById(int userId);
     void setUserAdmin(int userId);
-    void generateUsers();
+    void generateFakeUsers();
+    void generateStaticUsers();
+    void loadData();
+    void saveData();
+    int getUsersCount();
 }

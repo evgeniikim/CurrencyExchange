@@ -64,6 +64,11 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
+    public int getUsersCount() {
+        return users.size();
+    }
+
+    @Override
     public int saveToFile() {
         try {
             DataHelper.exportData("users.dat", users);

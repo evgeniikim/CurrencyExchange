@@ -85,7 +85,22 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void generateUsers() {
+    public void generateFakeUsers() {
+        int usersAdded = 0;
+        var fakeUsers = UserGenerator.generateUsersBatch(10);
+        for (UserModel user : fakeUsers) {
+            if(!userRepository.userExistsByEmail(user.getEmail()))
+            {
+                userRepository.addUser(user);
+                usersAdded++;
+            }
+        }
+        System.out.println("Добавлено фейковых пользователей: "+usersAdded);
+
+    }
+
+    @Override
+    public void generateStaticUsers() {
         var staticUsers = UserGenerator.generateStaticUsers();
         int usersAdded = 9;
         for (UserModel user : staticUsers) {
@@ -97,16 +112,20 @@ public class UserService implements IUserService {
         }
         System.out.println("Добавлено системных пользователей: "+usersAdded);
 
-        usersAdded = 0;
-        var fakeUsers = UserGenerator.generateUsersBatch(10);
-        for (UserModel user : fakeUsers) {
-            if(!userRepository.userExistsByEmail(user.getEmail()))
-            {
-                userRepository.addUser(user);
-                usersAdded++;
-            }
-        }
-        System.out.println("Добавлено фейковых пользователей: "+usersAdded);
+    }
 
+    @Override
+    public int getUsersCount() {
+      return userRepository.getUsersCount();
+    }
+
+
+    @Override
+    public void loadData() {
+        userRepository.loadFromFile();
+    }
+    @Override
+    public void saveData() {
+        userRepository.saveToFile();
     }
 }

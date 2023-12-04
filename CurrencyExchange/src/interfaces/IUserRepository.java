@@ -12,5 +12,5 @@ public interface IUserRepository extends IExportImportFile {
     void updateUser(IUserModel user);
     int getNextUserId();
     boolean userExistsByEmail(String email);
-
+    int getUsersCount();
 }
