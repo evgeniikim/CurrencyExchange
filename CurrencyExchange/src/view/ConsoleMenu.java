@@ -16,7 +16,7 @@ public class ConsoleMenu implements IConsoleMenu {
     private final UserService userService;
     private final TransactionService transactionService;
     private final CurrencyService currencyService;
-    private IUserModel currentUser;
+    private IUserModel currentUser = null;
 
     public ConsoleMenu(AccountService accountService, UserService userService, TransactionService transactionService, CurrencyService currencyService) {
         this.accountService = accountService;
@@ -48,6 +48,23 @@ public class ConsoleMenu implements IConsoleMenu {
         }
     }
 
+    public void start() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (true) {
+                if (currentUser == null) {
+                    showMainMenu();
+                } else { //костыль!!!!
+                    if(currentUser.getRole() == UserRole.ADMIN) {
+                        showAdminMenu(currentUser.getUserId());
+                    } else if(currentUser.getRole() == UserRole.CLIENT) {
+                        showUserMenu(currentUser.getUserId());
+                    }
+                }
+            }
+        }
+    }
+
+
     // public void setCurrentUser(IUserModel user) {
     //     this.currentUser = user;
     // }
@@ -57,7 +74,8 @@ public class ConsoleMenu implements IConsoleMenu {
     public void showMainMenu() {
         System.out.println("=== Главное меню ===");
         System.out.println("1. Вход");
-        System.out.println("2. Выход");
+        System.out.println("2. Регистрация");
+        System.out.println("3. Выход");
         handleMainMenuInput();
     }
 
@@ -108,7 +126,10 @@ public class ConsoleMenu implements IConsoleMenu {
             case 1:
                 showLoginMenu();
                 break;
-            case 2:
+            case 2://Регистрация нового пользователя
+                registerNewUser();
+                break;
+            case 3:
                 System.out.println("До свидания!");
                 System.exit(0);
                 break;
@@ -465,7 +486,7 @@ public class ConsoleMenu implements IConsoleMenu {
 
         // Вызов метода входа по имени пользователя и паролю
         IUserModel user = userService.login(username, password);
-
+        currentUser = user;
         if (user != null) {
             // Вход успешен, показываем соответствующее меню
             if (user.getRole() == UserRole.ADMIN) {
@@ -500,10 +521,6 @@ public class ConsoleMenu implements IConsoleMenu {
 
     private boolean registerNewUser() {
         Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Введите ID пользователя:");
-        int userId = scanner.nextInt();
-        scanner.nextLine();
 
         System.out.println("Введите имя пользователя:");
         String name = scanner.nextLine();

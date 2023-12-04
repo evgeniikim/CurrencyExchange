@@ -18,7 +18,7 @@ public class Main {
         CurrencyService currencyService = new CurrencyService(currencyRepository);
 
         ConsoleMenu consoleMenu = new ConsoleMenu(accountService, userService, transactionService, currencyService);
-        consoleMenu.showMainMenu();
+        consoleMenu.start();
 
     }
 }
