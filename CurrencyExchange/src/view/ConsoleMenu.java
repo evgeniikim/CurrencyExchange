@@ -446,7 +446,7 @@ public class ConsoleMenu implements IConsoleMenu {
         int userIdToAppoint = scanner.nextInt();
         scanner.nextLine();
         // Вызов метода сервиса пользователя для изменения роли на администратора
-        userService.updateUserProfile(userIdToAppoint);
+        userService.setUserAdmin(userIdToAppoint);
 
         System.out.println("Пользователь успешно назначен администратором.");
 

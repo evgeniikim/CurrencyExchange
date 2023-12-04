@@ -39,7 +39,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void updateUserProfile(int userId) {
+    public void setUserAdmin(int userId) {
         // Находим пользователя по идентификатору
         IUserModel user = userRepository.findUserById(userId);
 
@@ -56,7 +56,7 @@ public class UserService implements IUserService {
         }
     }
 
-    /*
+
     @Override
     public void updateUserProfile(IUserModel user) {
         // Обновление профиля пользователя
@@ -67,7 +67,7 @@ public class UserService implements IUserService {
             System.out.println("Пользователь не найден.");
         }
     }
-*/
+
 
     @Override
     public IUserModel getUserById(int userId) {
