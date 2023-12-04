@@ -36,6 +36,7 @@ public class ConsoleMenu implements IConsoleMenu {
         accountService.loadData();
     }
 
+    //TODO deprecated
     protected void finalize() throws Throwable {
         try {
             userService.saveData();
