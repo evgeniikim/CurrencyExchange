@@ -9,7 +9,7 @@ public interface IConsoleMenu {
 
     // Реализация метода для показа меню Администратора
     void showAdminMenu(int userId);
-    IUserModel login(String email, String password);
+//    IUserModel login(String email, String password);
 
 }
 
