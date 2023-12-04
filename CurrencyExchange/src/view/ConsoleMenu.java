@@ -500,4 +500,10 @@ public class ConsoleMenu implements IConsoleMenu {
             System.out.println("Счет пользователя не найден.");
         }
     }
+
+    private void generateUsers() {
+        userService.generateUsers();
+    }
+
+
 }
