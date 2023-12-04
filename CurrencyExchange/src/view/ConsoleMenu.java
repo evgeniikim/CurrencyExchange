@@ -468,10 +468,12 @@ public class ConsoleMenu implements IConsoleMenu {
 
         if (user != null) {
             // Вход успешен, показываем соответствующее меню
-            if ("admin".equals(user.getRole())) {
-                handleAdminMenuInput(user.getUserId());
+            if (user.getRole() == UserRole.ADMIN) {
+                showAdminMenu(user.getUserId());
+                //handleAdminMenuInput(user.getUserId());
             } else {
-                handleUserMenuInput(user.getUserId());
+                showUserMenu(user.getUserId());
+                //handleUserMenuInput(user.getUserId());
             }
         } else {
             System.out.println("Неверный email или пароль.");
