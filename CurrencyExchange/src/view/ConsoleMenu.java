@@ -194,7 +194,7 @@ public class ConsoleMenu implements IConsoleMenu {
                 appointAdministrator();
                 break;
             case 6://Регистрация нового пользователя
-                generateUsers();
+                registerNewUser();
                 break;
             case 7://Выйти из системы
                 showMainMenu();
@@ -493,5 +493,32 @@ public class ConsoleMenu implements IConsoleMenu {
 
     private void generateUsers() {
         userService.generateFakeUsers();
+    }
+
+    private boolean registerNewUser() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Введите ID пользователя:");
+        int userId = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.println("Введите имя пользователя:");
+        String name = scanner.nextLine();
+
+        System.out.println("Введите email пользователя:");
+        String email = scanner.nextLine();
+
+        System.out.println("Введите пароль пользователя:");
+        String password = scanner.nextLine();
+
+        var result = userService.registerUser(name, email, password);
+        if(result){
+            System.out.println("Пользователь успешно зарегистрирован.");
+            return true;
+        } else {
+            System.out.println("Ошибка ввода данных.");
+            return false;
+        }
+
     }
 }

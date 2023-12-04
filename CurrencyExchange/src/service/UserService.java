@@ -28,6 +28,21 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public boolean registerUser(String name, String email, String password) {
+        // Проверка входных данных и регистрация пользователя
+        var user = new UserModel(0, name, email, password);
+        if (validateUser(user)) {
+            user.setRole(UserRole.CLIENT);
+            userRepository.addUser(user);
+            System.out.println("Пользователь успешно зарегистрирован.");
+            return true;
+        } else {
+            System.out.println("Ошибка при регистрации пользователя.");
+            return false;
+        }
+    }
+
+    @Override
     public IUserModel login(String email, String password) {
         // Проверка учетных данных пользователя
         IUserModel user = userRepository.findUserByEmail(email);
