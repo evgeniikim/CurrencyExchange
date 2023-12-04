@@ -12,8 +12,16 @@ public class DataHelper {
     }
 
     public static Object importData(String fileName) throws IOException, ClassNotFoundException {
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
-            return in.readObject();
+        File file = new File(fileName);
+        if (file.exists()) {
+            System.out.println("Файл загружен "+fileName);
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+                return in.readObject();
+            }
+        }
+        else {
+            System.out.println("Файл не существует "+fileName);
+            return null;
         }
     }
 }

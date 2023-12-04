@@ -53,7 +53,9 @@ public class TransactionRepository implements ITransactionRepository {
     public int loadFromFile() {
         try {
             var loadUserTransactions = (Map<Integer, List<ITransactionModel>>) DataHelper.importData("usertransactions.dat");
-            userTransactions = loadUserTransactions;
+            if(loadUserTransactions!=null) {
+                userTransactions = loadUserTransactions;
+            }
             return 0;
         } catch (IOException | ClassNotFoundException e) {
             ExceptionHandling.handleException(e);

@@ -67,9 +67,15 @@ public class CurrencyRepository implements ICurrencyRepository {
     public int loadFromFile() {
         try {
             var loadCurrencies = (Map<String, ICurrencyModel>) DataHelper.importData("currencies.dat");
+            if(loadCurrencies!=null) {
+                currencies = loadCurrencies;
+            }
+
             var loadCurrencyRates = (Map<String, ICurrencyRateModel>) DataHelper.importData("currencyrates.dat");
-            currencies = loadCurrencies;
-            currencyRates = loadCurrencyRates;
+            if(loadCurrencyRates!=null) {
+                currencyRates = loadCurrencyRates;
+            }
+
             return 0;
         } catch (IOException | ClassNotFoundException e) {
             ExceptionHandling.handleException(e);

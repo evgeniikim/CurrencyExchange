@@ -68,7 +68,9 @@ public class AccountRepository implements IAccountRepository {
     public int loadFromFile() {
         try {
             var loadAccounts = (Map<Integer, IAccountModel>) DataHelper.importData("accounts.dat");
-            accounts = loadAccounts;
+            if(loadAccounts!=null) {
+                accounts = loadAccounts;
+            }
             return 0;
         } catch (IOException | ClassNotFoundException e) {
             ExceptionHandling.handleException(e);

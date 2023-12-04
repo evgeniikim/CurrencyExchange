@@ -83,7 +83,9 @@ public class UserRepository implements IUserRepository {
     public int loadFromFile() {
         try {
             var loadUsers = (Map<Integer, IUserModel>) DataHelper.importData("users.dat");
-            users = loadUsers;
+            if(loadUsers!=null) {
+                users = loadUsers;
+            }
             return 0;
         } catch (IOException | ClassNotFoundException e) {
             ExceptionHandling.handleException(e);
