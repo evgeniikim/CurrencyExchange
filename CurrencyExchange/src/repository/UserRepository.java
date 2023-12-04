@@ -19,7 +19,8 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public void addUser(IUserModel user) {
-        users.put(user.getUserId(), user);
+        var userId = getNextUserId();
+        users.put(userId, user);
         System.out.println("Пользователь сохранен: " + user);
     }
 
@@ -45,6 +46,23 @@ public class UserRepository implements IUserRepository {
             System.out.println("Пользователь для обновления не найден.");
         }
     }
+
+    @Override
+    public int getNextUserId() {
+        return users.keySet()
+                .stream()
+                .max(Integer::compare)
+                .map(maxId-> maxId +1)
+                .orElse(1);
+    }
+
+    @Override
+    public boolean userExistsByEmail(String email) {
+        return users.values()
+                .stream()
+                .anyMatch(user -> email.equals(user.getEmail()));
+    }
+
     @Override
     public int saveToFile() {
         try {

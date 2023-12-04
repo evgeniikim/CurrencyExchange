@@ -1,7 +1,9 @@
 package service;
 
+import generator.UserGenerator;
 import interfaces.*;
 import validator.*;
+import model.*;
 
 public class UserService implements IUserService {
 
@@ -80,5 +82,31 @@ public class UserService implements IUserService {
         return user.getName() != null && !user.getName().isEmpty() &&
                 userValidator.validateEmail(user.getEmail()) &&
                 userValidator.validatePassword(user.getPassword());
+    }
+
+    @Override
+    public void generateUsers() {
+        var staticUsers = UserGenerator.generateStaticUsers();
+        int usersAdded = 9;
+        for (UserModel user : staticUsers) {
+            if(!userRepository.userExistsByEmail(user.getEmail()))
+            {
+                userRepository.addUser(user);
+                usersAdded++;
+            }
+        }
+        System.out.println("Добавлено системных пользователей: "+usersAdded);
+
+        usersAdded = 0;
+        var fakeUsers = UserGenerator.generateUsersBatch(10);
+        for (UserModel user : fakeUsers) {
+            if(!userRepository.userExistsByEmail(user.getEmail()))
+            {
+                userRepository.addUser(user);
+                usersAdded++;
+            }
+        }
+        System.out.println("Добавлено фейковых пользователей: "+usersAdded);
+
     }
 }
