@@ -74,7 +74,8 @@ public class ConsoleMenu implements IConsoleMenu {
         System.out.println("3. Просмотр операций пользователя");
         System.out.println("4. Просмотр операций по валюте");
         System.out.println("5. Назначение другого пользователя администратором");
-        System.out.println("6. Выйти из системы");
+        System.out.println("6. Регистрация нового пользователя");
+        System.out.println("7. Выйти из системы");
         handleAdminMenuInput(userId);
     }
 
@@ -196,7 +197,10 @@ public class ConsoleMenu implements IConsoleMenu {
             case 5://Назначение другого пользователя администратором
                 appointAdministrator();
                 break;
-            case 6://Выйти из системы
+            case 6://Регистрация нового пользователя
+                generateUsers();
+                break;
+            case 7://Выйти из системы
                 showMainMenu();
                 break;
             default:
