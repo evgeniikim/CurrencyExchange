@@ -86,4 +86,13 @@ public class AccountService implements IAccountService {
     private int generateAccountId() {
         return accountRepository.getNextAccountId();
     }
+
+    @Override
+    public void loadData() {
+        accountRepository.loadFromFile();
+    }
+    @Override
+    public void saveData() {
+        accountRepository.saveToFile();
+    }
 }

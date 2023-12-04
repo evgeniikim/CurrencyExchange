@@ -43,4 +43,13 @@ public class CurrencyService implements ICurrencyService {
     public void addCurrency(ICurrencyModel currency) {
         currencyRepository.addCurrency(currency);
     }
+
+    @Override
+    public void loadData() {
+        currencyRepository.loadFromFile();
+    }
+    @Override
+    public void saveData() {
+        currencyRepository.saveToFile();
+    }
 }

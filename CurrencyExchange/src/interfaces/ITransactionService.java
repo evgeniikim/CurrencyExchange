@@ -7,4 +7,6 @@ public interface ITransactionService {
     List<ITransactionModel> getTransactionHistory(int userId);
     void exchangeCurrency(int accountIdFrom, int accountIdTo, double amount);
     List<ITransactionModel> getTransactionHistoryByCurrencyCode(String currencyCode);
+    void loadData();
+    void saveData();
 }

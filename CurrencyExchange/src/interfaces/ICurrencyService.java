@@ -8,4 +8,6 @@ public interface ICurrencyService {
     void updateCurrencyRate(ICurrencyRateModel currencyRate);
     void removeCurrency(String currencyCode);
     void addCurrency(ICurrencyModel currency);
+    void loadData();
+    void saveData();
 }

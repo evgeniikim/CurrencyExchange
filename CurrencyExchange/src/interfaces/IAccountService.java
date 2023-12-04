@@ -6,4 +6,6 @@ public interface IAccountService {
     IAccountModel getAccountById(int accountId);
     void deposit(int accountId, double amount);
     void withdraw(int accountId, double amount);
+    void loadData();
+    void saveData();
 }

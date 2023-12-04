@@ -81,4 +81,13 @@ public class TransactionService implements ITransactionService {
                 .filter(transaction -> transaction.getCurrencyCode().equals(currencyCode))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void loadData() {
+        transactionRepository.loadFromFile();
+    }
+    @Override
+    public void saveData() {
+        transactionRepository.saveToFile();
+    }
 }
