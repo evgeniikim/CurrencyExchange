@@ -1,10 +1,13 @@
 package repository;
 
 import Helper.DataHelper;
+import com.google.gson.reflect.TypeToken;
 import exception.ExceptionHandling;
 import interfaces.*;
+import model.TransactionModel;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +44,7 @@ public class TransactionRepository implements ITransactionRepository {
     @Override
     public int saveToFile() {
         try {
-            DataHelper.exportData("usertransactions.dat", userTransactions);
+            DataHelper.exportDataToJson("usertransactions.json", userTransactions);
             return 0;
         } catch (IOException e) {
             ExceptionHandling.handleException(e);
@@ -52,12 +55,13 @@ public class TransactionRepository implements ITransactionRepository {
     @Override
     public int loadFromFile() {
         try {
-            var loadUserTransactions = (Map<Integer, List<ITransactionModel>>) DataHelper.importData("usertransactions.dat");
+            Type type = new TypeToken<Map<Integer, List<TransactionModel>>>(){}.getType();
+            Map<Integer, List<ITransactionModel>> loadUserTransactions = DataHelper.importDataFromJson("usertransactions.json", type);
             if(loadUserTransactions!=null) {
                 userTransactions = loadUserTransactions;
             }
             return 0;
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             ExceptionHandling.handleException(e);
             return -1; // Код ошибки
         }

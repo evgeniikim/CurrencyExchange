@@ -2,12 +2,15 @@ package repository;
 
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
 import Helper.DataHelper;
+import com.google.gson.reflect.TypeToken;
 import interfaces.*;
 import exception.*;
+import model.UserModel;
 
 public class UserRepository implements IUserRepository {
 
@@ -71,7 +74,7 @@ public class UserRepository implements IUserRepository {
     @Override
     public int saveToFile() {
         try {
-            DataHelper.exportData("users.dat", users);
+            DataHelper.exportDataToJson("users.json", users);
             return 0;
         } catch (IOException e) {
             ExceptionHandling.handleException(e);
@@ -82,12 +85,13 @@ public class UserRepository implements IUserRepository {
     @Override
     public int loadFromFile() {
         try {
-            var loadUsers = (Map<Integer, IUserModel>) DataHelper.importData("users.dat");
+            Type type = new TypeToken<Map<Integer, UserModel>>(){}.getType();
+            Map<Integer, IUserModel> loadUsers = DataHelper.importDataFromJson("users.json", type);
             if(loadUsers!=null) {
                 users = loadUsers;
             }
             return 0;
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             ExceptionHandling.handleException(e);
             return -1; // Код ошибки
         }

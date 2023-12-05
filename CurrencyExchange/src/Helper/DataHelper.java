@@ -3,6 +3,8 @@ package Helper;
 import java.io.*;
 import java.util.Map;
 import com.google.gson.Gson;
+import java.lang.reflect.Type;
+
 
 public class DataHelper {
 
@@ -34,12 +36,12 @@ public class DataHelper {
         }
     }
 
-    public static <T> T importDataFromJson(String fileName, Class<T> type) throws IOException {
+    public static <T> T importDataFromJson(String fileName, Type typeOfT) throws IOException {
         File file = new File(fileName);
         if (file.exists()) {
             System.out.println("Файл загружен " + fileName);
             try (Reader reader = new FileReader(fileName)) {
-                return gson.fromJson(reader, type);
+                return gson.fromJson(reader, typeOfT);
             }
         } else {
             System.out.println("Файл не существует " + fileName);

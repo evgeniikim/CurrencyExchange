@@ -1,13 +1,16 @@
 package repository;
 
+import com.google.gson.reflect.TypeToken;
 import interfaces.IAccountModel;
 import interfaces.IAccountRepository;
 import Helper.*;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import exception.*;
+import model.AccountModel;
 
 public class AccountRepository implements IAccountRepository {
     private Map<Integer, IAccountModel> accounts;
@@ -56,7 +59,7 @@ public class AccountRepository implements IAccountRepository {
     @Override
     public int saveToFile() {
         try {
-            DataHelper.exportData("accounts.dat", accounts);
+            DataHelper.exportDataToJson("accounts.json", accounts);
             return 0;
         } catch (IOException e) {
             ExceptionHandling.handleException(e);
@@ -67,12 +70,13 @@ public class AccountRepository implements IAccountRepository {
     @Override
     public int loadFromFile() {
         try {
-            var loadAccounts = (Map<Integer, IAccountModel>) DataHelper.importData("accounts.dat");
+            Type type = new TypeToken<Map<Integer, AccountModel>>(){}.getType();
+            Map<Integer, IAccountModel> loadAccounts = DataHelper.importDataFromJson("accounts.json", type);
             if(loadAccounts!=null) {
                 accounts = loadAccounts;
             }
             return 0;
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             ExceptionHandling.handleException(e);
             return -1; // Код ошибки
         }

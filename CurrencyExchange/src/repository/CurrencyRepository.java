@@ -1,15 +1,17 @@
 package repository;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import Helper.DataHelper;
+import com.google.gson.reflect.TypeToken;
 import exception.ExceptionHandling;
 import interfaces.*;
-import model.CurrencyModel;
+import model.*;
 
 public class CurrencyRepository implements ICurrencyRepository {
     private Map<String, ICurrencyModel> currencies; // Хранилище данных о валютах
@@ -54,8 +56,8 @@ public class CurrencyRepository implements ICurrencyRepository {
     @Override
     public int saveToFile() {
         try {
-            DataHelper.exportData("currencies.dat", currencies);
-            DataHelper.exportData("currencyrates.dat", currencyRates);
+            DataHelper.exportDataToJson("currencies.json", currencies);
+            DataHelper.exportDataToJson("currencyrates.json", currencyRates);
             return 0;
         } catch (IOException e) {
             ExceptionHandling.handleException(e);
@@ -66,18 +68,20 @@ public class CurrencyRepository implements ICurrencyRepository {
     @Override
     public int loadFromFile() {
         try {
-            var loadCurrencies = (Map<String, ICurrencyModel>) DataHelper.importData("currencies.dat");
+            Type typeICurrencyModel = new TypeToken<Map<String, CurrencyModel>>(){}.getType();
+            Map<String, ICurrencyModel> loadCurrencies = DataHelper.importDataFromJson("currencies.json", typeICurrencyModel);
             if(loadCurrencies!=null) {
                 currencies = loadCurrencies;
             }
 
-            var loadCurrencyRates = (Map<String, ICurrencyRateModel>) DataHelper.importData("currencyrates.dat");
+            Type typeICurrencyRateModel = new TypeToken<Map<String, CurrencyRateModel>>(){}.getType();
+            Map<String, ICurrencyRateModel> loadCurrencyRates = DataHelper.importDataFromJson("currencyrates.json", typeICurrencyRateModel);
             if(loadCurrencyRates!=null) {
                 currencyRates = loadCurrencyRates;
             }
 
             return 0;
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             ExceptionHandling.handleException(e);
             return -1; // Код ошибки
         }
