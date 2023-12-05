@@ -187,6 +187,7 @@ public class ConsoleMenu implements IConsoleMenu {
                 handleCurrencyExchange();
                 break;
             case 9://Выйти из системы
+                currentUser = null;
                 showMainMenu();
                 break;
             default:
@@ -219,6 +220,7 @@ public class ConsoleMenu implements IConsoleMenu {
                 registerNewUser();
                 break;
             case 7://Выйти из системы
+                currentUser = null;
                 showMainMenu();
                 break;
             default:
