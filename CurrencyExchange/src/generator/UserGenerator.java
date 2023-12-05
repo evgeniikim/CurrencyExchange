@@ -46,7 +46,7 @@ public class UserGenerator {
           String firstName = "Admin";
           String lastName = "Admin";
           String name = firstName + " " + lastName;
-          String email = "admin"+domain;
+          String email = "admin";
           String password = "admin";
           UserModel user = new UserModel(0, name, email, password);
           user.setRole(UserRole.ADMIN);
@@ -56,7 +56,7 @@ public class UserGenerator {
             String firstName = "User1";
             String lastName = "User1";
             String name = firstName + " " + lastName;
-            String email = "user1"+domain;
+            String email = "user1";
             String password = "user";
             UserModel user = new UserModel(0, name, email, password);
             user.setRole(UserRole.CLIENT);
@@ -66,7 +66,7 @@ public class UserGenerator {
             String firstName = "User2";
             String lastName = "User2";
             String name = firstName + " " + lastName;
-            String email = "user2"+domain;
+            String email = "user2";
             String password = "user";
             UserModel user = new UserModel(0, name, email, password);
             user.setRole(UserRole.CLIENT);
@@ -76,7 +76,7 @@ public class UserGenerator {
             String firstName = "User3";
             String lastName = "User3";
             String name = firstName + " " + lastName;
-            String email = "user3"+domain;
+            String email = "user3";
             String password = "user";
             UserModel user = new UserModel(0, name, email, password);
             user.setRole(UserRole.CLIENT);
