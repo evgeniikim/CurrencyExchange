@@ -76,7 +76,7 @@ public class TransactionRepository implements ITransactionRepository {
     @Override
     public int loadFromFile() {
         try {
-            Type type = new TypeToken<List<ITransactionModel>>(){}.getType();
+            Type type = new TypeToken<List<TransactionModel>>(){}.getType();
             List<ITransactionModel> loadUserTransactions = DataHelper.importDataFromJson("usertransactions.json", type);
             if(loadUserTransactions!=null) {
                 transactions = loadUserTransactions;
