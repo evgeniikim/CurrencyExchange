@@ -1,17 +1,17 @@
 package view;
 
+import exception.ExceptionHandling;
 import interfaces.*;
 import model.CurrencyModel;
 import model.CurrencyRateModel;
 import model.UserModel;
 import service.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ConsoleMenu  {
     private final Scanner scanner;
@@ -50,6 +50,17 @@ public class ConsoleMenu  {
             accountService.saveData();
         } finally {
             super.finalize();
+        }
+    }
+
+    private void saveData() {
+        try {
+            userService.saveData();
+            transactionService.saveData();
+            currencyService.saveData();
+            accountService.saveData();
+        } catch (Exception e) {
+            ExceptionHandling.handleException(e);
         }
     }
 
@@ -102,10 +113,12 @@ public class ConsoleMenu  {
                     }
                     break;
                 case 8:
+                    saveData();
                     logoutUser();
                     break;
                 case 0:
                     running = false;
+                    saveData();
                     break;
                 default:
                     System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
@@ -258,6 +271,7 @@ public class ConsoleMenu  {
         System.out.println("1. Пополнить счет");
         System.out.println("2. Снять со счета");
         System.out.println("3. Перевести на другой счет");
+        System.out.println("4. Обмен валюты");
         System.out.println("0. Назад");
         System.out.print("Введите номер операции: ");
 
@@ -272,6 +286,9 @@ public class ConsoleMenu  {
                 break;
             case 3:
                 transfer();
+                break;
+            case 4:
+                exchange();
                 break;
             case 0:
                 break;
@@ -383,6 +400,33 @@ public class ConsoleMenu  {
         }
     }
 
+    public void exchange() {
+        try {
+            System.out.println("Выберите счет для снятия средств:");
+            int accountIdFrom = selectUserAccount(null);
+            if (accountIdFrom == -1) return;
+
+            System.out.println("Выберите счет для зачисления средств:");
+            int accountIdTo = selectUserAccount(accountIdFrom);
+            if (accountIdTo == -1) return;
+
+            System.out.print("Введите сумму для обмена: ");
+            double amount = Double.parseDouble(scanner.nextLine());
+
+            //TODO нужно брать из базы
+            System.out.print("Введите обменный курс: ");
+            double exchangeRate = Double.parseDouble(scanner.nextLine());
+
+            transactionService.exchangeCurrency(accountIdFrom, accountIdTo, amount, exchangeRate);
+            System.out.println("Обмен валюты выполнен успешно.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Ошибка: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Произошла ошибка при обмене валюты.");
+        }
+    }
+
+
     //TODO реализовать выбор аккаунта получателя
     private int selectAccount() {
         System.out.print("Введите идентификатор аккаунта: ");
@@ -411,6 +455,41 @@ public class ConsoleMenu  {
         }
 
         return userAccounts.get(accountChoice).getAccountId();
+    }
+
+    private int selectUserAccount(Integer excludeAccountId) {
+        List<IAccountModel> userAccounts = accountService.findAccountsByUserId(currentUser.getUserId());
+        if (userAccounts.isEmpty()) {
+            System.out.println("У вас нет аккаунтов.");
+            return -1;
+        }
+
+        System.out.println("Выберите аккаунт:");
+        int index = 1;
+        Map<Integer, Integer> indexToAccountIdMap = new HashMap<>();
+        for (IAccountModel account : userAccounts) {
+            if (excludeAccountId == null || account.getAccountId() != excludeAccountId) {
+                System.out.println(index + ". Аккаунт ID: " + account.getAccountId() + ", Валюта: " + account.getCurrency().getName());
+                indexToAccountIdMap.put(index, account.getAccountId());
+                index++;
+            }
+        }
+
+        if (indexToAccountIdMap.isEmpty()) {
+            System.out.println("Нет доступных аккаунтов для выбора.");
+            return -1;
+        }
+
+        System.out.print("Введите номер аккаунта: ");
+        int accountChoice = scanner.nextInt();
+        scanner.nextLine();
+
+        if (!indexToAccountIdMap.containsKey(accountChoice)) {
+            System.out.println("Неверный выбор. Попробуйте снова.");
+            return -1;
+        }
+
+        return indexToAccountIdMap.get(accountChoice);
     }
 
 
