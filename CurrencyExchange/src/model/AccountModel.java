@@ -8,13 +8,13 @@ public class AccountModel implements IAccountModel, Serializable {
     private static final long serialVersionUID = 1L;
     private int accountId;          // Уникальный идентификатор счета
     private int userId;             // Идентификатор пользователя, которому принадлежит счет
-    private ICurrencyModel currency;// Модель валюты счета
+    private CurrencyModel currency;// Модель валюты счета
     private double balance;         // Баланс счета
 
     public AccountModel(int accountId, int userId, ICurrencyModel currency, double balance) {
         this.accountId = accountId;
         this.userId = userId;
-        this.currency = currency;
+        this.currency = (CurrencyModel) currency;
         this.balance = balance;
     }
 
@@ -40,7 +40,7 @@ public class AccountModel implements IAccountModel, Serializable {
 
     @Override
     public void setCurrency(ICurrencyModel currency) {
-        this.currency = currency;
+        this.currency = (CurrencyModel)currency;
     }
 
     @Override

@@ -13,7 +13,7 @@ public class TransactionModel implements ITransactionModel, Serializable {
     private double amount;
     private Date transactionDate;
 
-    private ICurrencyModel currency;
+    private CurrencyModel currency;
 
     public TransactionModel(int transactionId, int accountId, TransactionType type, double amount, Date transactionDate) {
         this.transactionId = transactionId;
@@ -65,6 +65,6 @@ public class TransactionModel implements ITransactionModel, Serializable {
     }
 
     public void setCurrency(ICurrencyModel currency) {
-        this.currency = currency;
+        this.currency = (CurrencyModel)currency;
     }
 }
