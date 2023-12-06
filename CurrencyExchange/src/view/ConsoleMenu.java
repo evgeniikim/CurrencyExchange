@@ -413,9 +413,18 @@ public class ConsoleMenu  {
             System.out.print("Введите сумму для обмена: ");
             double amount = Double.parseDouble(scanner.nextLine());
 
-            //TODO нужно брать из базы
-            System.out.print("Введите обменный курс: ");
-            double exchangeRate = Double.parseDouble(scanner.nextLine());
+            IAccountModel account = accountService.getAccountById(accountIdFrom);
+            // Получение обменного курса
+            double exchangeRate;
+            ICurrencyRateModel currencyRate = currencyService.getCurrencyRate(account.getCurrencyCode());
+            if (currencyRate != null) {
+                exchangeRate = currencyRate.getRate();
+                System.out.println("Текущий обменный курс: " + exchangeRate);
+            } else {
+                //TODO тестовый функционал
+                System.out.println("Текущий обменный курс не найден. Введите обменный курс вручную (тестовый функционал):");
+                exchangeRate = Double.parseDouble(scanner.nextLine());
+            }
 
             transactionService.exchangeCurrency(accountIdFrom, accountIdTo, amount, exchangeRate);
             System.out.println("Обмен валюты выполнен успешно.");
@@ -425,6 +434,7 @@ public class ConsoleMenu  {
             System.out.println("Произошла ошибка при обмене валюты.");
         }
     }
+
 
 
     //TODO реализовать выбор аккаунта получателя

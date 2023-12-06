@@ -2,10 +2,7 @@ package repository;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import Helper.DataHelper;
 import com.google.gson.reflect.TypeToken;
@@ -20,10 +17,16 @@ public class CurrencyRepository implements ICurrencyRepository {
     public CurrencyRepository() {
         this.currencies = new HashMap<>();
         this.currencyRates = new HashMap<>();
+
+        //TODO нужно вынести в DATAHelper
         // Инициализация валют по умолчанию
         addDefaultCurrency(new CurrencyModel("USD", "US Dollar"));
         addDefaultCurrency(new CurrencyModel("EUR", "EU Euro"));
         addDefaultCurrency(new CurrencyModel("UAH", "UH Hryvnia"));
+
+        addDefaultCurrencyRate(new CurrencyRateModel("USD", 1, new Date()));
+        addDefaultCurrencyRate(new CurrencyRateModel("EUR", 0.9, new Date()));
+        addDefaultCurrencyRate(new CurrencyRateModel("UAH", 0.4,new Date()));
     }
 
     @Override
@@ -109,6 +112,9 @@ public class CurrencyRepository implements ICurrencyRepository {
     // Метод для добавления валюты по умолчанию
     private void addDefaultCurrency(ICurrencyModel currency) {
         currencies.put(currency.getCurrencyCode(), currency);
+    }
+    private void addDefaultCurrencyRate(CurrencyRateModel currencyRate) {
+        currencyRates.put(currencyRate.getCurrencyCode(), currencyRate);
     }
 
 }

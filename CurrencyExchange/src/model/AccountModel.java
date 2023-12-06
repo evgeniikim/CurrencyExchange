@@ -42,6 +42,11 @@ public class AccountModel implements IAccountModel, Serializable {
     public void setCurrency(ICurrencyModel currency) {
         this.currency = (CurrencyModel)currency;
     }
+    @Override
+    public String getCurrencyCode() {
+        return currency.getCode();
+    }
+
 
     @Override
     public void deposit(double amount) {
