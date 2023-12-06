@@ -7,7 +7,9 @@ import Helper.*;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import exception.*;
 import model.AccountModel;
@@ -28,6 +30,17 @@ public class AccountRepository implements IAccountRepository {
     @Override
     public IAccountModel findAccountById(int accountId) {
         return accounts.get(accountId);
+    }
+
+    @Override
+    public List<IAccountModel> findAccountsByUserId(int userId) {
+        List<IAccountModel> userAccounts = new ArrayList<>();
+        for (IAccountModel account : accounts.values()) {
+            if (account.getUserId() == userId) {
+                userAccounts.add(account);
+            }
+        }
+        return userAccounts;
     }
 
     @Override

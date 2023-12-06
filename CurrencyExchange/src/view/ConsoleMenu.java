@@ -3,13 +3,17 @@ package view;
 import interfaces.*;
 import model.CurrencyModel;
 import model.CurrencyRateModel;
+import model.UserModel;
 import service.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
-public class ConsoleMenu implements IConsoleMenu {
+public class ConsoleMenu  {
     private final Scanner scanner;
 
     private final AccountService accountService;
@@ -23,6 +27,7 @@ public class ConsoleMenu implements IConsoleMenu {
         this.userService = userService;
         this.transactionService = transactionService;
         this.currencyService = currencyService;
+        this.currentUser = null;
         this.scanner = new Scanner(System.in);
         userService.loadData();
         if(userService.getUsersCount()==0)
@@ -49,36 +54,509 @@ public class ConsoleMenu implements IConsoleMenu {
     }
 
     public void start() {
-        try (Scanner scanner = new Scanner(System.in)) {
-            while (true) {
-                if (currentUser == null) {
-                    showMainMenu();
-                } else { //костыль!!!!
-                    if(currentUser.getRole() == UserRole.ADMIN) {
-                        showAdminMenu(currentUser.getUserId());
-                    } else if(currentUser.getRole() == UserRole.CLIENT) {
-                        showUserMenu(currentUser.getUserId());
-                    }
+        boolean running = true;
+        while (running) {
+            System.out.println("\n*** Обменный пункт валюты ***");
+            if (currentUser == null) {
+                System.out.println("1. Регистрация");
+                System.out.println("2. Вход в систему");
+            } else {
+                System.out.println("3. Управление аккаунтами");
+                System.out.println("4. Выполнить транзакцию");
+                System.out.println("5. Просмотр истории операций");
+                if (currentUser.getRole()  == UserRole.ADMIN) {
+                    System.out.println("6. Управление валютами");
+                    System.out.println("7. Установка курсов валют");
                 }
+                System.out.println("8. Выход из учетной записи");
+            }
+            System.out.println("0. Выход из приложения");
+            System.out.print("Выберите опцию: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+            switch (choice) {
+                case 1:
+                    registerUser();
+                    break;
+                case 2:
+                    loginUser();
+                    break;
+                case 3:
+                    manageAccounts();
+                    break;
+                case 4:
+                    performTransaction();
+                    break;
+                case 5:
+                    viewTransactionHistory();
+                    break;
+                case 6:
+                    if (currentUser.getRole() == UserRole.ADMIN) {
+                        manageCurrencies();
+                    }
+                    break;
+                case 7:
+                    if (currentUser.getRole() == UserRole.ADMIN) {
+                        setCurrencyRates();
+                    }
+                    break;
+                case 8:
+                    logoutUser();
+                    break;
+                case 0:
+                    running = false;
+                    break;
+                default:
+                    System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
             }
         }
     }
 
+    private void loginUser() {
+        System.out.print("Введите email: ");
+        String email = scanner.nextLine();
 
-    // public void setCurrentUser(IUserModel user) {
-    //     this.currentUser = user;
-    // }
+        System.out.print("Введите пароль: ");
+        String password = scanner.nextLine();
 
-    // Реализация метода для показа главного меню
-    @Override
-    public void showMainMenu() {
-        System.out.println("=== Главное меню ===");
-        System.out.println("1. Вход");
-        System.out.println("2. Регистрация");
-        System.out.println("3. Выход");
-        handleMainMenuInput();
+        IUserModel user = userService.login(email, password);
+
+        if (user != null) {
+            System.out.println("Успешный вход в систему.");
+            currentUser = user;
+        } else {
+            System.out.println("Неверный email или пароль.");
+        }
     }
 
+    private void registerUser() {
+        System.out.print("Введите имя: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Введите email: ");
+        String email = scanner.nextLine();
+
+        System.out.print("Введите пароль: ");
+        String password = scanner.nextLine();
+
+        var result = userService.registerUser(name, email, password);
+        if(result){
+            System.out.println("Пользователь успешно зарегистрирован.");
+        } else {
+            System.out.println("Ошибка ввода данных.");
+        }
+    }
+
+    //---------------------------------------------------------------------------------------
+
+    private void manageAccounts() {
+        System.out.println("Управление аккаунтами:");
+        System.out.println("1. Создать новый аккаунт");
+        System.out.println("2. Просмотреть мои аккаунты");
+        System.out.println("3. Обновить аккаунт");
+        System.out.println("4. Удалить аккаунт");
+        System.out.println("0. Назад");
+        System.out.print("Выберите опцию: ");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        switch (choice) {
+            case 1:
+                createAccount();
+                break;
+            case 2:
+                viewAccounts();
+                break;
+            case 3:
+                System.out.println("Метод пока не реализован!!!");
+                //updateAccount();
+                break;
+            case 4:
+                deleteAccount();
+                break;
+            case 0:
+                break;
+            default:
+                System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
+        }
+    }
+
+    private void createAccount() {
+        System.out.println("Выберите валюту для нового счета:");
+        List<ICurrencyModel> currencies = currencyService.getAllCurrencies();
+        for (int i = 0; i < currencies.size(); i++) {
+            System.out.println((i + 1) + ". " + currencies.get(i).getName());
+        }
+
+        System.out.print("Введите номер валюты: ");
+        int currencyChoice = scanner.nextInt();
+
+        if (currencyChoice < 1 || currencyChoice > currencies.size()) {
+            System.out.println("Неверный выбор. Попробуйте снова.");
+            return;
+        }
+
+        ICurrencyModel selectedCurrency = currencies.get(currencyChoice - 1);
+        accountService.createAccount(currentUser.getUserId(), selectedCurrency);
+
+        System.out.println("Счет успешно создан в валюте " + selectedCurrency.getName());
+    }
+
+    private void viewAccounts() {
+        List<IAccountModel> accounts = accountService.findAccountsByUserId(currentUser.getUserId());
+        if (accounts.isEmpty()) {
+            System.out.println("У вас нет аккаунтов.");
+        } else {
+            for (IAccountModel account : accounts) {
+                System.out.println("Аккаунт ID: " + account.getAccountId() + ", Валюта: " + account.getCurrency().getName() + ", Баланс: " + account.getBalance());
+            }
+        }
+    }
+
+    private void deleteAccount() {
+        List<IAccountModel> userAccounts = accountService.findAccountsByUserId(currentUser.getUserId());
+        if (userAccounts.isEmpty()) {
+            System.out.println("У вас нет аккаунтов для удаления.");
+            return;
+        }
+
+        System.out.println("Выберите аккаунт для удаления:");
+        for (int i = 0; i < userAccounts.size(); i++) {
+            IAccountModel account = userAccounts.get(i);
+            System.out.println((i + 1) + ". Аккаунт ID: " + account.getAccountId() + ", Баланс: " + account.getBalance());
+        }
+
+        System.out.print("Введите номер аккаунта: ");
+        int accountChoice = scanner.nextInt() - 1;
+        if (accountChoice < 0 || accountChoice >= userAccounts.size()) {
+            System.out.println("Неверный выбор. Попробуйте снова.");
+            return;
+        }
+
+        IAccountModel selectedAccount = userAccounts.get(accountChoice);
+        if (selectedAccount.getBalance() > 0) {
+            System.out.println("На вашем счете есть средства. Сначала переведите их на другой ваш счет.");
+            //TODO Здесь можно реализовать логику для перевода средств
+            return;
+        }
+
+        if(accountService.closeAccount(selectedAccount.getAccountId())) {
+            System.out.println("Аккаунт успешно удален.");
+        }
+        else {
+            System.out.println("Ошибка при удалении аккаунта.");
+        }
+
+    }
+
+
+    //---------------------------------------------------------------------------------------
+
+    private void performTransaction() {
+        System.out.println("Выберите тип транзакции:");
+        System.out.println("1. Пополнить счет");
+        System.out.println("2. Снять со счета");
+        System.out.println("3. Перевести на другой счет");
+        System.out.println("0. Назад");
+        System.out.print("Введите номер операции: ");
+
+        int operation = scanner.nextInt();
+        scanner.nextLine();
+        switch (operation) {
+            case 1:
+                deposit();
+                break;
+            case 2:
+                withdraw();
+                break;
+            case 3:
+                transfer();
+                break;
+            case 0:
+                break;
+            default:
+                System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
+        }
+    }
+
+
+    private void deposit() {
+        List<IAccountModel> userAccounts = accountService.findAccountsByUserId(currentUser.getUserId());
+        if (userAccounts.isEmpty()) {
+            System.out.println("У вас нет аккаунтов для пополнения.");
+            return;
+        }
+
+        System.out.println("Выберите аккаунт для пополнения:");
+        for (int i = 0; i < userAccounts.size(); i++) {
+            IAccountModel account = userAccounts.get(i);
+            System.out.println((i + 1) + ". Аккаунт ID: " + account.getAccountId()+ " Currency:"+account.getCurrency()+ " Balance:"+account.getBalance());
+        }
+
+        System.out.print("Введите номер аккаунта: ");
+        int accountChoice = scanner.nextInt() - 1;
+        if (accountChoice < 0 || accountChoice >= userAccounts.size()) {
+            System.out.println("Неверный выбор. Попробуйте снова.");
+            return;
+        }
+
+        IAccountModel selectedAccount = userAccounts.get(accountChoice);
+
+        System.out.print("Введите сумму для пополнения: ");
+        double amount = scanner.nextDouble();
+
+        if (amount <= 0) {
+            System.out.println("Сумма пополнения должна быть больше нуля.");
+            return;
+        }
+
+        transactionService.performTransaction(selectedAccount.getAccountId(), TransactionType.DEPOSIT, amount);
+        System.out.println("Счет успешно пополнен на сумму " + amount);
+    }
+
+    private void withdraw() {
+        List<IAccountModel> userAccounts = accountService.findAccountsByUserId(currentUser.getUserId());
+        if (userAccounts.isEmpty()) {
+            System.out.println("У вас нет аккаунтов для снятия средств.");
+            return;
+        }
+
+        System.out.println("Выберите аккаунт для снятия средств:");
+        for (int i = 0; i < userAccounts.size(); i++) {
+            IAccountModel account = userAccounts.get(i);
+            System.out.println((i + 1) + ". Аккаунт ID: " + account.getAccountId() + ", Баланс: " + account.getBalance());
+        }
+
+        System.out.print("Введите номер аккаунта: ");
+        int accountChoice = scanner.nextInt() - 1;
+        if (accountChoice < 0 || accountChoice >= userAccounts.size()) {
+            System.out.println("Неверный выбор. Попробуйте снова.");
+            return;
+        }
+
+        IAccountModel selectedAccount = userAccounts.get(accountChoice);
+
+        System.out.print("Введите сумму для снятия: ");
+        double amount = scanner.nextDouble();
+
+        if (amount <= 0 || amount > selectedAccount.getBalance()) {
+            System.out.println("Неверная сумма для снятия.");
+            return;
+        }
+
+        transactionService.performTransaction(selectedAccount.getAccountId(), TransactionType.WITHDRAWAL, amount);
+        System.out.println("Со счета снято " + amount + " единиц.");
+    }
+
+    private void transfer() {
+        int accountIdFrom, accountIdTo;
+        if (currentUser.getRole() == UserRole.ADMIN) {
+            System.out.println("Выберите аккаунт отправителя:");
+            accountIdFrom = selectAccount();
+
+            System.out.println("Выберите аккаунт получателя:");
+            int toAccount = selectAccount();
+            if(toAccount>0) {
+                accountIdTo = toAccount;
+            }else {
+                return;
+            }
+        } else {
+            accountIdFrom = selectUserAccount();
+            System.out.println("Выберите аккаунт получателя:");
+            int toAccount = selectAccount();
+            if(toAccount>0) {
+                accountIdTo = toAccount;
+            }else {
+                return;
+            }
+        }
+
+        System.out.print("Введите сумму для перевода: ");
+        double amount = scanner.nextDouble();
+
+        if (transactionService.transferFunds(accountIdFrom, accountIdTo, amount)) {
+            System.out.println("Перевод успешно выполнен.");
+        } else {
+            System.out.println("Не удалось выполнить перевод.");
+        }
+    }
+
+    //TODO реализовать выбор аккаунта получателя
+    private int selectAccount() {
+        System.out.print("Введите идентификатор аккаунта: ");
+        return scanner.nextInt();
+    }
+
+    //TODO улучшить выбора текущего пользователя
+    private int selectUserAccount() {
+        List<IAccountModel> userAccounts = accountService.findAccountsByUserId(currentUser.getUserId());
+        if (userAccounts.isEmpty()) {
+            System.out.println("У вас нет аккаунтов.");
+            return -1;
+        }
+
+        System.out.println("Выберите аккаунт:");
+        for (int i = 0; i < userAccounts.size(); i++) {
+            IAccountModel account = userAccounts.get(i);
+            System.out.println((i + 1) + ". Аккаунт ID: " + account.getAccountId() + ", Валюта: " + account.getCurrency().getName());
+        }
+
+        System.out.print("Введите номер аккаунта: ");
+        int accountChoice = scanner.nextInt() - 1;
+        if (accountChoice < 0 || accountChoice >= userAccounts.size()) {
+            System.out.println("Неверный выбор. Попробуйте снова.");
+            return -1;
+        }
+
+        return userAccounts.get(accountChoice).getAccountId();
+    }
+
+
+    //---------------------------------------------------------------------------------------
+    private void viewTransactionHistory() {
+        System.out.println("1. Просмотреть историю транзакций по конкретному аккаунту");
+        System.out.println("2. Просмотреть историю всех моих транзакций");
+        System.out.println("0. Назад");
+        System.out.print("Выберите опцию: ");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        switch (choice) {
+            case 1:
+                viewAccountTransactionHistory();
+                break;
+            case 2:
+                viewUserTransactionHistory();
+                break;
+            case 0:
+                break;
+            default:
+                System.out.println("Неверный выбор. Попробуйте снова.");
+        }
+    }
+
+    private void viewAccountTransactionHistory() {
+        System.out.print("Введите идентификатор аккаунта: ");
+        int accountId = selectUserAccount();
+        List<ITransactionModel> transactions = transactionService.getTransactionHistoryByAccountId(accountId);
+        printTransactions(transactions);
+    }
+
+    private void viewUserTransactionHistory() {
+        List<ITransactionModel> transactions = transactionService.getTransactionHistoryByUserId(currentUser.getUserId());
+        printTransactions(transactions);
+    }
+
+    private void printTransactions(List<ITransactionModel> transactions) {
+        if (transactions.isEmpty()) {
+            System.out.println("Транзакции не найдены.");
+            return;
+        }
+        for (ITransactionModel transaction : transactions) {
+            System.out.println("Транзакция ID: " + transaction.getTransactionId() +
+                    ", Тип: " + transaction.getType() +
+                    ", Сумма: " + transaction.getAmount() +
+                    ", Дата: " + transaction.getTransactionDate());
+        }
+    }
+    //---------------------------------------------------------------------------------------
+
+    private void manageCurrencies() {
+        System.out.println("Управление валютами:");
+        System.out.println("1. Просмотр всех валют");
+        System.out.println("2. Добавить новую валюту");
+        System.out.println("0. Назад");
+        System.out.print("Выберите опцию: ");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        switch (choice) {
+            case 1:
+                viewAllCurrencies();
+                break;
+            case 2:
+                addNewCurrency();
+                break;
+            case 0:
+                break;
+            default:
+                System.out.println("Неверный выбор. Пожалуйста, попробуйте снова.");
+        }
+    }
+
+    private void viewAllCurrencies() {
+        List<ICurrencyModel> currencies = currencyService.getAllCurrencies();
+        if (currencies.isEmpty()) {
+            System.out.println("Валюты не найдены.");
+            return;
+        }
+        for (ICurrencyModel currency : currencies) {
+            System.out.println("Код валюты: " + currency.getCurrencyCode() + ", Название: " + currency.getName());
+        }
+    }
+
+    private void addNewCurrency() {
+        System.out.print("Введите код новой валюты: ");
+        String code = scanner.next();
+        System.out.print("Введите название валюты: ");
+        String name = scanner.next();
+
+        ICurrencyModel newCurrency = new CurrencyModel(code, name);
+        currencyService.addCurrency(newCurrency);
+        System.out.println("Валюта добавлена: " + newCurrency);
+    }
+
+
+
+    //---------------------------------------------------------------------------------------
+
+    private void setCurrencyRates() {
+        List<ICurrencyModel> currencies = currencyService.getAllCurrencies();
+        if (currencies.isEmpty()) {
+            System.out.println("Валюты для обновления не найдены.");
+            return;
+        }
+
+        System.out.println("Выберите валюту для обновления курса:");
+        for (int i = 0; i < currencies.size(); i++) {
+            ICurrencyModel currency = currencies.get(i);
+            System.out.println((i + 1) + ". " + currency.getName() + " (" + currency.getCurrencyCode() + ")");
+        }
+
+        System.out.print("Введите номер валюты: ");
+        int currencyChoice = scanner.nextInt() - 1;
+        if (currencyChoice < 0 || currencyChoice >= currencies.size()) {
+            System.out.println("Неверный выбор. Попробуйте снова.");
+            return;
+        }
+
+        ICurrencyModel selectedCurrency = currencies.get(currencyChoice);
+
+        System.out.print("Введите новый курс для " + selectedCurrency.getName() + ": ");
+        double newRate = scanner.nextDouble();
+
+        ICurrencyRateModel currencyRate = new CurrencyRateModel(selectedCurrency.getCurrencyCode(), newRate, convertLocalDateToDate(LocalDate.now()));
+        currencyService.updateCurrencyRate(currencyRate);
+        System.out.println("Курс валюты обновлен.");
+    }
+
+    //---------------------------------------------------------------------------------------
+
+    private void logoutUser()
+    {
+        currentUser = null;
+    }
+    //---------------------------------------------------------------------------------------
+
+    private Date convertLocalDateToDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+    //---------------------------------------------------------------------------------------
+
+
+/*
     // Реализация метода для показа меню входа
     @Override
     public void showLoginMenu() {
@@ -430,7 +908,7 @@ public class ConsoleMenu implements IConsoleMenu {
         int userId = scanner.nextInt();
         scanner.nextLine();
         // Получение списка транзакций для пользователя
-        List<ITransactionModel> userTransactions = transactionService.getTransactionHistory(userId);
+        List<ITransactionModel> userTransactions = transactionService.getTransactionHistoryByUserId(userId);
 
         if (userTransactions.isEmpty()) {
             System.out.println("Для указанного пользователя нет операций.");
@@ -504,6 +982,7 @@ public class ConsoleMenu implements IConsoleMenu {
         }
     }
 
+
     //Метод просмотра баланса пользователя
     private void viewBalance(int userId) {
         // Поиск счета пользователя по его идентификатору
@@ -543,4 +1022,7 @@ public class ConsoleMenu implements IConsoleMenu {
         }
 
     }
+
+*/
 }
+

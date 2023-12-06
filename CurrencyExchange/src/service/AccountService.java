@@ -3,6 +3,8 @@ package service;
 import interfaces.*;
 import model.AccountModel;
 
+import java.util.List;
+
 public class AccountService implements IAccountService {
     private final IAccountRepository accountRepository;
 
@@ -13,21 +15,17 @@ public class AccountService implements IAccountService {
     //Метод открытия счета
     @Override
     public void createAccount(int userId, ICurrencyModel currency) {
-        // Генерация нового идентификатора счета
         int newAccountId = generateAccountId();
 
-        // Создание нового счета
         IAccountModel newAccount = new AccountModel(newAccountId, userId, currency, 0.0);
 
-        // Сохранение счета в репозитории
         accountRepository.saveAccount(newAccount);
 
         System.out.println("Счет успешно создан. Идентификатор счета: " + newAccountId);
     }
 
-// Метод закрытия счета
     @Override
-    public void closeAccount(int accountId) {
+    public boolean closeAccount(int accountId) {
         // Поиск счета по идентификатору
         IAccountModel account = accountRepository.findAccountById(accountId);
 
@@ -35,8 +33,10 @@ public class AccountService implements IAccountService {
             // Удаление счета из репозитория
             accountRepository.deleteAccount(accountId);
             System.out.println("Счет успешно закрыт.");
+            return true;
         } else {
             System.out.println("Счет с указанным идентификатором не найден.");
+            return false;
         }
     }
 
@@ -44,6 +44,12 @@ public class AccountService implements IAccountService {
     public IAccountModel getAccountById(int accountId) {
         // Поиск счета по идентификатору
         return accountRepository.findAccountById(accountId);
+    }
+
+    @Override
+    public List<IAccountModel> findAccountsByUserId(int userId)
+    {
+        return accountRepository.findAccountsByUserId(userId);
     }
 
     @Override

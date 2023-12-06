@@ -4,6 +4,7 @@ package interfaces;
 public enum TransactionType {
     DEPOSIT("Пополнение счета"),
     WITHDRAWAL("Снятие средств"),
+    TRANSFER("Перевод средств"),
     CURRENCY_EXCHANGE("Обмен валюты");
 
     private final String description;
